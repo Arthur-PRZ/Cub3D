@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/02 09:24:33 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/02 09:28:18 by artperez         ###   ########.fr       */
+/*   Created: 2025/06/02 09:58:02 by artperez          #+#    #+#             */
+/*   Updated: 2025/06/02 10:16:39 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,5 @@
 
 int main(int argc, char **argv)
 {
-    if (argc != 2)
-    {
-        write(2, "File .cub needed", 16);
-        exit ;
-    }
+    check_input(argc, argv[2]);
 }

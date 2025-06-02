@@ -5,7 +5,7 @@ SRCDIR = src/
 OBJDIR = obj/
 LIBFTDIR = libft
 
-SRC_FILES = main input_management
+SRC_FILES = main input_management utils get_map
 SRC = $(addprefix $(SRCDIR), $(addsuffix .c, $(SRC_FILES)))
 OBJ = $(addprefix $(OBJDIR), $(addsuffix .o, $(SRC_FILES)))
 NAME = Cub3D

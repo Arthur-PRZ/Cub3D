@@ -1,21 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/02 09:58:02 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/02 12:32:43 by ctravers         ###   ########.fr       */
+/*   Created: 2025/06/02 11:24:25 by ctravers          #+#    #+#             */
+/*   Updated: 2025/06/02 12:53:17 by ctravers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/cub3D.h"
 
-int main(int argc, char **argv)
+void	exit_error(char *msg)
 {
-	map_data_t map;
-	
-    check_input(argc, argv[1]);
-	init_map_data(argv[1], &map);
+    ft_putstr_fd(msg, 2);
+    exit(1);
+}
+
+char	*skip_space(char *line)
+{
+	int	i;
+
+	i = 0;
+	if (!line)
+		return (0);
+	while (line[i] && line[i] == ' ' && line[i] == '\t')
+		i++;
+	return (line + i);
 }

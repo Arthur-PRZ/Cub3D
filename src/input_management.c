@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   input_magement.c                                   :+:      :+:    :+:   */
+/*   input_management.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 10:01:13 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/02 10:26:34 by artperez         ###   ########.fr       */
+/*   Updated: 2025/06/02 11:26:26 by ctravers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,15 +15,9 @@
 void check_input(int args_nbr, char *input)
 {
     if (args_nbr <= 1)
-    {
-        write(2, "file .cub is needed\n", 21);
-        exit (1);
-    }
+		exit_error("file .cub is needed\n");
     if (args_nbr >= 3)
-    {
-        write(2, "Only one file .cub is needed\n", 30);
-        exit (1);
-    }
+		exit_error("Only one file .cub is needed\n");
     check_map_name(input);
 }
 
@@ -44,6 +38,5 @@ void	check_map_name(char *map_name)
 		}
 		i--;
 	}
-    write(2, "file .cub is needed\n", 21);
-    exit (1);
+	exit_error("file .cub is needed\n");
 }

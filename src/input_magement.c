@@ -6,7 +6,7 @@
 /*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 10:01:13 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/02 10:12:39 by artperez         ###   ########.fr       */
+/*   Updated: 2025/06/02 10:21:17 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,12 @@ void check_input(int args_nbr, char *input)
     if (args_nbr <= 1)
     {
         write(2, "file .cub is needed\n", 21);
-        exit;
+        exit (1);
     }
     if (args_nbr >= 3)
     {
         write(2, "Only one file .cub is needed\n", 30);
-        exit;
+        exit (1);
     }
     check_map_name(input);
 }
@@ -45,5 +45,5 @@ int	check_map_name(char *map_name)
 		i--;
 	}
     write(2, "file .cub is needed\n", 21);
-    exit;
+    exit (1);
 }

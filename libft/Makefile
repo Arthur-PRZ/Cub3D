@@ -33,10 +33,8 @@ $(NAME): $(OBJ)
 		@cp libft/libft.a .
 		@mv libft.a $(NAME)
 		@$(AR) $(NAME) $(OBJ)
-		@echo "Compilation Done"
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c | $(OBJF)
-		@echo "Compiling .."
 		@$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
 $(OBJF):
@@ -45,14 +43,11 @@ $(OBJF):
 clean:
 		@rm -rf $(OBJ_DIR)
 		@make clean -C $(LIBFT)
-		@echo "Object files cleaned"
 
 fclean: clean
 		@rm -f $(NAME)
 		@rm -f $(LIBFT)/libft.a
-		@echo "All clean"
 
 re: fclean all
-	@echo "Cleaned and rebuilt"
 
 .PHONY:	all clean fclean re

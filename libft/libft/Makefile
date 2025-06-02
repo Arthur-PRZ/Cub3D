@@ -58,19 +58,19 @@ OBJB = $(BONUS:.c=.o)
 all : $(NAME)
 
 $(NAME): $(OBJ)
-	ar rcs $(NAME) $(OBJ)
+	@ar rcs $(NAME) $(OBJ)
 
 bonus: $(OBJB)
-	ar rcs $(NAME) $(OBJB)
+	@ar rcs $(NAME) $(OBJB)
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJ) $(OBJB)
+	@rm -f $(OBJ) $(OBJB)
 
 fclean : clean
-	rm  -f $(NAME)
+	@rm  -f $(NAME)
 
 re : fclean all
 

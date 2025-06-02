@@ -38,7 +38,7 @@ void	check_map_name(char *map_name)
 	{
 		if (map_name[i] == '.')
 		{
-			if (ft_strncmp(ft_strnstr(map_name + i, ".cub", 4), ".cub",
+			if (ft_strncmp(map_name + i, ".cub",
 					len) == 0)
 				return ;
 		}

@@ -14,5 +14,5 @@
 
 int main(int argc, char **argv)
 {
-    check_input(argc, argv[2]);
+    check_input(argc, argv[1 ]);
 }

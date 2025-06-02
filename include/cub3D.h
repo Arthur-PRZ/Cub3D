@@ -6,7 +6,7 @@
 /*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 10:03:46 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/02 10:06:16 by artperez         ###   ########.fr       */
+/*   Updated: 2025/06/02 10:26:51 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,5 +15,9 @@
 
 #include <unistd.h>
 #include <stdlib.h>
+
+void check_input(int args_nbr, char *input);
+void	check_map_name(char *map_name);
+
 
 #endif

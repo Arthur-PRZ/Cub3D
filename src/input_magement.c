@@ -6,7 +6,7 @@
 /*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 10:01:13 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/02 10:21:17 by artperez         ###   ########.fr       */
+/*   Updated: 2025/06/02 10:26:34 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void check_input(int args_nbr, char *input)
     check_map_name(input);
 }
 
-int	check_map_name(char *map_name)
+void	check_map_name(char *map_name)
 {
 	int	i;
 	int	len;
@@ -40,7 +40,7 @@ int	check_map_name(char *map_name)
 		{
 			if (ft_strncmp(ft_strnstr(map_name + i, ".cub", 4), ".cub",
 					len) == 0)
-				return (0);
+				return ;
 		}
 		i--;
 	}

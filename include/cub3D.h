@@ -15,6 +15,10 @@
 
 #include <unistd.h>
 #include <stdlib.h>
+#include "../libft/include/libft.h"
+#include "../libft/include/ft_printf.h"
+#include "../libft/include/get_next_line_bonus.h"
+
 
 void check_input(int args_nbr, char *input);
 void	check_map_name(char *map_name);

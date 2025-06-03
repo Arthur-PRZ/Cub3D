@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_map.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
+/*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 11:11:32 by ctravers          #+#    #+#             */
-/*   Updated: 2025/06/02 12:52:24 by ctravers         ###   ########.fr       */
+/*   Updated: 2025/06/03 09:23:02 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,21 +33,30 @@ static void	check_line(char *line, map_data_t *map_data)
 {
 	if (!line)
 		return ;
-	if (!map_data->no_text && ft_strncmp(skip_space(line), "NO", 2))
+	else if (!map_data->no_text && ft_strncmp(skip_space(line), "NO", 2))
 		map_data->no_text = get_path(line);
-	if (!map_data->so_text && ft_strncmp(skip_space(line), "SO", 2))
+	else if (!map_data->so_text && ft_strncmp(skip_space(line), "SO", 2))
 		map_data->so_text = get_path(line);
-	if (!map_data->we_text && ft_strncmp(skip_space(line), "WE", 2))
+	else if (!map_data->we_text && ft_strncmp(skip_space(line), "WE", 2))
 		map_data->we_text = get_path(line);
-	if (!map_data->ea_text && ft_strncmp(skip_space(line), "EA", 2))
+	else if (!map_data->ea_text && ft_strncmp(skip_space(line), "EA", 2))
 		map_data->ea_text = get_path(line);
-	if (!map_data->floor && ft_strncmp(skip_space(line), "F", 1))
+	else if (!map_data->floor && ft_strncmp(skip_space(line), "F", 1))
 		map_data->floor = ft_atoi(get_path(line));
-	if (!map_data->ceiling && ft_strncmp(skip_space(line), "C", 1))
+	else if (!map_data->ceiling && ft_strncmp(skip_space(line), "C", 1))
 		map_data->ceiling = ft_atoi(get_path(line));
+	else if (!map_data->map && (ft_strncmp(skip_space(line), "1", 1) == '0'
+		|| ft_strncmp(skip_space(line), "0", 1)))
+		get_map(line, map_data);
 }
 
-static void	get_map(map_data_t *map_data, int fd)
+static void	get_map(char *line, map_data_t *map_data)
+{
+	
+
+}
+
+static void	get_map_data(map_data_t *map_data, int fd)
 {
 	char	*read_file;
 
@@ -71,9 +80,10 @@ void	init_map_data(char *map_name, map_data_t *map_data)
 	map_data->so_text = NULL;
 	map_data->we_text = NULL;
 	map_data->ea_text = NULL;
+	map_data->map = NULL;
 	fd = open(map_name, O_RDONLY);
 	if (fd < 0)
 		exit_error("Error: Can't open fd\n");
-	get_map(map_data, fd);
+	get_map_data(map_data, fd);
 	ft_printf("North: %s South: %s West: %s East: %s Floor: %i Ceiling: %i\n", map_data->no_text, map_data->so_text, map_data->we_text, map_data->ea_text, map_data->floor, map_data->ceiling);
 }

@@ -6,7 +6,7 @@
 /*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 11:24:25 by ctravers          #+#    #+#             */
-/*   Updated: 2025/06/03 09:10:34 by artperez         ###   ########.fr       */
+/*   Updated: 2025/06/03 10:15:53 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ char	*skip_space(char *line)
 	i = 0;
 	if (!line)
 		return (0);
-	while (line[i] && line[i] == ' ' && line[i] == '\t')
+	while (line[i] && (line[i] == ' ' || line[i] == '\t'))
 		i++;
 	return (line + i);
 }

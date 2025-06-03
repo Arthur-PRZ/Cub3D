@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3D.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
+/*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 10:03:46 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/02 12:32:31 by ctravers         ###   ########.fr       */
+/*   Updated: 2025/06/03 12:50:47 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,15 @@
 #include "../libft/include/libft.h"
 #include "../libft/include/ft_printf.h"
 #include "../libft/include/get_next_line_bonus.h"
+#include <stdbool.h>
+
+typedef struct	map_s
+{
+	int	x;
+	int	y;
+	int	z;
+	char **grid;
+}		map_t;
 
 typedef struct map_data_s
 {
@@ -27,7 +36,7 @@ typedef struct map_data_s
 		char	*ea_text;
 		int		floor;
 		int		ceiling;
-		char	**map;
+		map_t	map;
 }		map_data_t;
 
 void	check_input(int args_nbr, char *input);

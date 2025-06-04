@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_map.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 11:11:32 by ctravers          #+#    #+#             */
-/*   Updated: 2025/06/03 14:21:03 by artperez         ###   ########.fr       */
+/*   Updated: 2025/06/04 11:25:04 by ctravers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ static bool	is_alpha(char *line)
 	i = 0;
 	while(line[i] && line[i] != '\n')
 	{
-		if (ft_isalpha(line[i]) && line[i] != ' ' && line[i] != 'W' && line[i] != 'N' && line[i] != 'S' && line[i] != 'E')
+		if ((ft_isalpha(line[i]) && line[i] != ' ' && line[i] != 'W' && line[i] != 'N' && line[i] != 'S' && line[i] != 'E') || line[i] == '\t')
 			return (true);
 		i++;
 	}
@@ -101,7 +101,7 @@ static void	check_line(char *line, map_data_t *map_data)
 		map_data->ceiling = ft_atoi(get_path(line));
 		return ;
 	}
-	if (!ft_strncmp(skip_space(line), "1", 1) && !is_alpha(line) && is_data_init(map_data))
+	if ((!ft_strncmp(skip_space(line), "1", 1) || !ft_strncmp(skip_space(line), "0", 1)) && !is_alpha(line) && is_data_init(map_data))
 	{
 		get_map(line, map_data);
 		return ;
@@ -176,40 +176,62 @@ static int	count_map_height(char *map_name)
 	return (height);
 }
 
-void	check_map(map_data_t *map_data, int x, int y)
+static bool	check_neighbor(map_data_t *map_data, int x, int y)
 {
-	char left;
-	char right;
 	char top;
 	char bot;
-	char curr;
+	char left;
+	char right;
 	
-	if (!map_data->map.grid[y][x])
-		return ;
-	left = '\0';
-	right = '\0';
-	bot = '\0';
 	top = '\0';
-	curr = map_data->map.grid[y][x];
-	if (x - 1 > 0)
-		left = map_data->map.grid[y][x - 1];
-	if (x + 1 < (int)ft_strlen(map_data->map.grid[y]))
-		right = map_data->map.grid[y][x + 1];
-	if (y - 1 > 0)
-		top = map_data->map.grid[y - 1][x];
+	bot = '\0';
+	right = '\0';
+	left = '\0';
 	if (y + 1 < map_data->map.y)
-		bot = map_data->map.grid[y + 1][x];
-	if (curr == ' ')
+		top = map_data->map.grid[y + 1][x];
+	if (y - 1 >= 0)
+		bot = map_data->map.grid[y - 1][x];
+	if (x + 1 <= (int)ft_strlen(map_data->map.grid[y]))
+		left = map_data->map.grid[y][x + 1];
+	if (x - 1 >= 0)
+		right = map_data->map.grid[y][x - 1];
+	if (map_data->map.grid[y][x] == '0' && ((top == ' ' || top == '\0') || (bot == '\0' || bot == ' ')
+		|| (left == '\0' || left == ' ') || (right == '\0' || right == ' ')))
 	{
-		if ((left && left == '0') || (right && right == '0') || (top && top == '0') || (bot && bot == '0'))
-			exit_and_free(NULL, "Error: Unclosed map");
-		check_map(map_data, x + 1, y);
-		check_map(map_data, x - 1, y);
-		check_map(map_data, x, y + 1);
-		check_map(map_data, x, y - 1);
+		ft_printf("Top: %c, Bot: %c, Right: %c, Left: %c, pos x: %i, pos y: %i, char: %c\n", top, bot, right, left, x, y, map_data->map.grid[y][x]);
+		return (false);
 	}
-	
+	return (true);
 }
+
+void	check_map(map_data_t *map_data)
+{
+	int	x;
+	int	y;
+	int height;
+	int	len;
+
+	y = 0;
+	len = 0;
+	height = map_data->map.y;
+	while (y < height)
+	{
+		x = 0;
+		len = (int)ft_strlen(map_data->map.grid[y]);
+		while (x < len)
+		{
+			if (!check_neighbor(map_data, x, y))
+				exit_and_free(NULL, "Error: Unclosed map");
+			if (map_data->map.grid[0][x] == '0' || map_data->map.grid[height - 1][x] == '0')
+				exit_and_free(NULL, "Error: Unclosed map");
+			if (map_data->map.grid[y][0] == '0' || map_data->map.grid[y][len - 1] == '0')
+				exit_and_free(NULL, "Error: Unclosed map");
+			x++;
+		}
+		y++;
+	}
+}
+
 
 void	init_map_data(char *map_name, map_data_t *map_data)
 {
@@ -218,8 +240,6 @@ void	init_map_data(char *map_name, map_data_t *map_data)
 	map_data->ceiling = 0;
 	map_data->floor = 0;
 	map_data->map.y = 0;
-	map_data->map.x = 0;
-	map_data->map.z = 0;
 	map_data->no_text = NULL;
 	map_data->so_text = NULL;
 	map_data->we_text = NULL;
@@ -233,9 +253,9 @@ void	init_map_data(char *map_name, map_data_t *map_data)
 		exit_error("Error: Can't open fd\n");
 	get_map_data(map_data, fd);
 	ft_printf("North: %s South: %s West: %s East: %s Floor: %i Ceiling: %i\n", map_data->no_text, map_data->so_text, map_data->we_text, map_data->ea_text, map_data->floor, map_data->ceiling);
-	check_map(map_data, 0, 0);
+	check_map(map_data);
 	int i = 0;
-	while (map_data->map.grid[i] != NULL)
+	while (i < map_data->map.y)
 	{
 		ft_printf("%s\n", map_data->map.grid[i]);
 		i++;

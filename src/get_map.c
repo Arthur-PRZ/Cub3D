@@ -6,7 +6,7 @@
 /*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 11:11:32 by ctravers          #+#    #+#             */
-/*   Updated: 2025/06/04 11:25:04 by ctravers         ###   ########.fr       */
+/*   Updated: 2025/06/04 12:29:41 by ctravers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static char	*get_path(char *line)
 		a++;
 	if (line[a] == '\n')
 		line[a] = '\0';
-	return (skip_space(line + i + 1));
+	return (ft_strdup(skip_space(line + i + 1)));
 }
 
 static void	get_map(char *line, map_data_t *map_data)
@@ -60,10 +60,30 @@ static bool	is_alpha(char *line)
 	return (false);
 }
 
-static void	exit_and_free(char *line, char *msg)
+static void	exit_and_free(char *line, char *msg, map_data_t *map_data)
 {
-	(void)line;
-	(void)msg;
+	int i;
+
+	i = 0;
+	if (line)
+		free(line);
+	if (map_data->map.grid)
+	{
+		while(i < map_data->map.y)
+		{
+			free(map_data->map.grid[i]);
+			i++;
+		}
+		free(map_data->map.grid);
+	}
+	// if (map_data->so_text)
+	// 	free(map_data->so_text);
+	// if (map_data->no_text)
+	// 	free(map_data->no_text);
+	// if (map_data->we_text)
+	// 	free(map_data->we_text);	
+	// if (map_data->ea_text)
+	// 	free(map_data->ea_text);
 	ft_printf("%s\n", msg);
 	exit(1);
 }
@@ -74,44 +94,52 @@ static void	check_line(char *line, map_data_t *map_data)
 	if (!map_data->no_text && !ft_strncmp(skip_space(line), "NO", 2))
 	{
 		map_data->no_text = get_path(line);
+		free(line);
 		return ;
 	}
 	if (!map_data->so_text && !ft_strncmp(skip_space(line), "SO", 2))
 	{
 		map_data->so_text = get_path(line);
+		free(line);
 		return ;
 	}
 	if (!map_data->we_text && !ft_strncmp(skip_space(line), "WE", 2))
 	{
 		map_data->we_text = get_path(line);
+		free(line);
 		return ;
 	}
 	if (!map_data->ea_text && !ft_strncmp(skip_space(line), "EA", 2))
 	{
 		map_data->ea_text = get_path(line);
+		free(line);
 		return ;
 	}
 	if (!map_data->floor && !ft_strncmp(skip_space(line), "F", 1))
 	{
 		map_data->floor = ft_atoi(get_path(line));
+		free(line);
 		return ;
 	}	
 	if (!map_data->ceiling && !ft_strncmp(skip_space(line), "C", 1))
 	{
 		map_data->ceiling = ft_atoi(get_path(line));
+		free(line);
 		return ;
 	}
 	if ((!ft_strncmp(skip_space(line), "1", 1) || !ft_strncmp(skip_space(line), "0", 1)) && !is_alpha(line) && is_data_init(map_data))
 	{
 		get_map(line, map_data);
+		free(line);
 		return ;
 	}
 	else if (is_alpha(line) && is_data_init(map_data))
-		exit_and_free(line, "Error: Invalid character detected");
+		exit_and_free(line, "Error: Invalid character detected", map_data);
 	else if (!ft_strncmp(skip_space(line), "1", 1) && !is_data_init(map_data))
-		exit_and_free(line, "Error: Missing data");
+		exit_and_free(line, "Error: Missing data", map_data);
 	if (line[0] != '\n')
-		exit_and_free(line, "Error: Invalid character detected");
+		exit_and_free(line, "Error: Invalid character detected", map_data);
+	free(line);
 }
 
 
@@ -127,10 +155,9 @@ static void	get_map_data(map_data_t *map_data, int fd)
 		check_line(read_file, map_data);
 		read_file = get_next_line(fd);
 	}
-	map_data->map.grid[map_data->map.y + 1] = NULL;
 }
 
-static void	check_eof(int fd)
+static void	check_eof(int fd, map_data_t *map_data)
 {
 	char	*line;
 
@@ -140,12 +167,12 @@ static void	check_eof(int fd)
 		if (!line)
 			break;
 		if (line && line[0] != '\n')
-			exit_and_free(line, "Error: Invalid map");
+			exit_and_free(line, "Error: Invalid map", map_data);
 		free(line);
 	}
 }
 
-static int	count_map_height(char *map_name)
+static int	count_map_height(char *map_name, map_data_t *map_data)
 {
 	int		fd;
 	char	*line;
@@ -161,7 +188,10 @@ static int	count_map_height(char *map_name)
 	{
 		line = get_next_line(fd);
 		if (!line || (map_line && line[0] == '\n'))
+		{
+			free(line);
 			break ;
+		}
 		map_line = false;
 		if ((!ft_strncmp(skip_space(line), "1", 1)
 			|| !ft_strncmp(skip_space(line), "0", 1)))
@@ -171,7 +201,7 @@ static int	count_map_height(char *map_name)
 		}
 		free(line);
 	}
-	check_eof(fd);
+	check_eof(fd, map_data);
 	close(fd);
 	return (height);
 }
@@ -187,11 +217,11 @@ static bool	check_neighbor(map_data_t *map_data, int x, int y)
 	bot = '\0';
 	right = '\0';
 	left = '\0';
-	if (y + 1 < map_data->map.y)
-		top = map_data->map.grid[y + 1][x];
-	if (y - 1 >= 0)
-		bot = map_data->map.grid[y - 1][x];
-	if (x + 1 <= (int)ft_strlen(map_data->map.grid[y]))
+	if (y - 1 >= 0 && x < (int)ft_strlen(map_data->map.grid[y - 1]))
+		top = map_data->map.grid[y - 1][x];
+	if (y + 1 < map_data->map.y && x < (int)ft_strlen(map_data->map.grid[y + 1]))
+		bot = map_data->map.grid[y + 1][x];
+	if (x + 1 < (int)ft_strlen(map_data->map.grid[y]))
 		left = map_data->map.grid[y][x + 1];
 	if (x - 1 >= 0)
 		right = map_data->map.grid[y][x - 1];
@@ -221,11 +251,11 @@ void	check_map(map_data_t *map_data)
 		while (x < len)
 		{
 			if (!check_neighbor(map_data, x, y))
-				exit_and_free(NULL, "Error: Unclosed map");
-			if (map_data->map.grid[0][x] == '0' || map_data->map.grid[height - 1][x] == '0')
-				exit_and_free(NULL, "Error: Unclosed map");
-			if (map_data->map.grid[y][0] == '0' || map_data->map.grid[y][len - 1] == '0')
-				exit_and_free(NULL, "Error: Unclosed map");
+				exit_and_free(NULL, "Error: Unclosed map", map_data);
+			if ((y == 0 && map_data->map.grid[0][x] == '0') || (y == height - 1 && map_data->map.grid[height - 1][x] == '0'))
+				exit_and_free(NULL, "Error: Unclosed map", map_data);
+			if ((x == 0 && map_data->map.grid[y][0] == '0') || (x == len - 1 && map_data->map.grid[y][len - 1] == '0'))
+				exit_and_free(NULL, "Error: Unclosed map", map_data);
 			x++;
 		}
 		y++;
@@ -245,14 +275,13 @@ void	init_map_data(char *map_name, map_data_t *map_data)
 	map_data->we_text = NULL;
 	map_data->ea_text = NULL;
 	map_data->map.grid = NULL;
-	map_data->map.y = count_map_height(map_name);
+	map_data->map.y = count_map_height(map_name, map_data);
 	map_data->map.grid = malloc((map_data->map.y + 1) * sizeof(char *));
-	ft_printf("%i\n", map_data->map.y);
 	fd = open(map_name, O_RDONLY);
 	if (fd < 0)
 		exit_error("Error: Can't open fd\n");
+	ft_printf("North:%s South:%s West:%s East:%s", map_data->no_text, map_data->so_text, map_data->we_text, map_data->ea_text);
 	get_map_data(map_data, fd);
-	ft_printf("North: %s South: %s West: %s East: %s Floor: %i Ceiling: %i\n", map_data->no_text, map_data->so_text, map_data->we_text, map_data->ea_text, map_data->floor, map_data->ceiling);
 	check_map(map_data);
 	int i = 0;
 	while (i < map_data->map.y)
@@ -260,4 +289,5 @@ void	init_map_data(char *map_name, map_data_t *map_data)
 		ft_printf("%s\n", map_data->map.grid[i]);
 		i++;
 	}
+	exit_and_free(NULL, "", map_data);
 }

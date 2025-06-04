@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ctravers <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 10:11:32 by ctravers          #+#    #+#             */
-/*   Updated: 2025/01/09 10:04:43 by ctravers         ###   ########.fr       */
+/*   Updated: 2025/06/04 12:16:16 by ctravers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,5 +119,7 @@ char	*get_next_line(int fd)
 		return (NULL);
 	}
 	buf[fd] = deldoneline(buf[fd]);
+	// free(buf[fd]);
+	// buf[fd] = NULL;
 	return (line);
 }

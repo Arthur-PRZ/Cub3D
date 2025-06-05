@@ -6,7 +6,7 @@
 /*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 11:11:32 by ctravers          #+#    #+#             */
-/*   Updated: 2025/06/05 11:19:30 by artperez         ###   ########.fr       */
+/*   Updated: 2025/06/05 12:33:45 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ static void	get_map(char *line, t_map_data *map_data)
 {
 	static int	i;
 
+	if (map_data->map.grid == NULL)
+		map_data->map.grid = malloc((map_data->map.y + 1) * sizeof(char *));
 	map_data->map.grid[i] = ft_strdup(line);
 	map_data->map.grid[i][ft_strlen(line) - 1] = '\0';
 	i++;
@@ -67,12 +69,12 @@ static void	exit_and_free(char *line, char *msg, t_map_data *map_data)
 	i = 0;
 	if (line)
 		free(line);
-	if (map_data->map.grid && map_data->map.grid[0] != NULL
-		&& map_data->map.grid[0][0] != '\0')
+	if (map_data->map.grid)
 	{
 		while(i < map_data->map.y)
 		{
-			free(map_data->map.grid[i]);
+			if (map_data->map.grid[i])
+				free(map_data->map.grid[i]);
 			i++;
 		}
 		free(map_data->map.grid);
@@ -166,16 +168,16 @@ static void	check_line(char *line, t_map_data *map_data)
 	if (!map_data->floor && !ft_strncmp(skip_space(line), "F", 1))
 	{
 		temp = get_path(line);
-		map_data->floor = get_rgb(temp, map_data);
 		free(line);
+		map_data->floor = get_rgb(temp, map_data);
 		free(temp);
 		return ;
 	}	
 	if (!map_data->ceiling && !ft_strncmp(skip_space(line), "C", 1))
 	{
 		temp = get_path(line);
-		map_data->ceiling = get_rgb(temp, map_data);
 		free(line);
+		map_data->ceiling = get_rgb(temp, map_data);
 		free(temp);
 		return ;
 	}
@@ -328,7 +330,6 @@ void	init_map_data(char *map_name, t_map_data *map_data)
 	map_data->ea_text = NULL;
 	map_data->map.grid = NULL;
 	map_data->map.y = count_map_height(map_name, map_data);
-	map_data->map.grid = malloc((map_data->map.y + 1) * sizeof(char *));
 	fd = open(map_name, O_RDONLY);
 	if (fd < 0)
 		exit_error("Error: Can't open fd\n");

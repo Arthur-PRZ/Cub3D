@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3D.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
+/*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 10:03:46 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/04 10:25:00 by ctravers         ###   ########.fr       */
+/*   Updated: 2025/06/05 09:28:18 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,13 @@
 #include "../libft/include/get_next_line_bonus.h"
 #include <stdbool.h>
 
-typedef struct	map_s
+typedef struct	s_map
 {
 	int		y;
 	char **grid;
-}		map_t;
+}		t_map;
 
-typedef struct map_data_s
+typedef struct s_map_data
 {
 		char	*no_text;
 		char	*so_text;
@@ -34,12 +34,12 @@ typedef struct map_data_s
 		char	*ea_text;
 		int		floor;
 		int		ceiling;
-		map_t	map;
-}		map_data_t;
+		t_map	map;
+}		t_map_data;
 
 void	check_input(int args_nbr, char *input);
 void	check_map_name(char *map_name);
-void	init_map_data(char *map_name, map_data_t *map_data);
+void	init_map_data(char *map_name, t_map_data *map_data);
 void	exit_error(char *msg);
 char	*skip_space(char *line);
 

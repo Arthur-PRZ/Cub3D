@@ -6,7 +6,7 @@
 /*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 11:11:32 by ctravers          #+#    #+#             */
-/*   Updated: 2025/06/04 12:50:13 by artperez         ###   ########.fr       */
+/*   Updated: 2025/06/05 11:19:30 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static char	*get_path(char *line)
 	return (ft_strdup(skip_space(line + i + 1)));
 }
 
-static void	get_map(char *line, map_data_t *map_data)
+static void	get_map(char *line, t_map_data *map_data)
 {
 	static int	i;
 
@@ -38,7 +38,7 @@ static void	get_map(char *line, map_data_t *map_data)
 	i++;
 }
 
-static bool	is_data_init(map_data_t *map_data)
+static bool	is_data_init(t_map_data *map_data)
 {
 	if (map_data->ceiling && map_data->so_text 
 		&& map_data->no_text && map_data->ea_text && map_data->we_text && map_data->floor)
@@ -60,14 +60,15 @@ static bool	is_alpha(char *line)
 	return (false);
 }
 
-static void	exit_and_free(char *line, char *msg, map_data_t *map_data)
+static void	exit_and_free(char *line, char *msg, t_map_data *map_data)
 {
 	int i;
 
 	i = 0;
 	if (line)
 		free(line);
-	if (map_data->map.grid)
+	if (map_data->map.grid && map_data->map.grid[0] != NULL
+		&& map_data->map.grid[0][0] != '\0')
 	{
 		while(i < map_data->map.y)
 		{
@@ -87,7 +88,52 @@ static void	exit_and_free(char *line, char *msg, map_data_t *map_data)
 	ft_printf("%s\n", msg);
 	exit(1);
 }
-static void	check_line(char *line, map_data_t *map_data)
+
+static char	*skip_figure_and_comma(char	*tmp, char *line, t_map_data *map_data)
+{
+	int	i;
+
+	i = 0;
+	while (tmp[i] && (tmp[i] >= '0' && tmp[i] <= '9'))
+		i++;
+	while (tmp[i] && tmp[i] == ' ')
+		i++;
+	if (tmp[i] == ',' && ((tmp[i + 1] >= '0' && tmp[i + 1] <= '9') || tmp[i + 1] == '\0' || tmp[i + 1] == ' '))
+	{
+		i++;
+		return (skip_space(tmp + i));
+	}
+	else
+		exit_and_free(line, "Error: Rgb, invalid format", map_data);
+	return (NULL);
+}
+
+int	get_rgb(char *line, t_map_data *map_data)
+{
+	int	red;
+	int	green;
+	int	blue;
+	int	rgb;
+	char	*tmp;
+
+	green = -1;
+	blue = -1;
+	red = -1;
+	tmp = line;
+	red = ft_atoi(tmp);
+	tmp = skip_figure_and_comma(tmp, line, map_data);
+	green = ft_atoi(tmp);
+	tmp = skip_figure_and_comma(tmp, line, map_data);
+	if (!is_alpha(tmp))
+		blue = ft_atoi(tmp);
+	if (red < 0 || red > 255 || green < 0 || green > 255 ||blue < 0 || blue > 255)
+		exit_and_free(line, "Error: Rgb, invalid format", map_data);
+	ft_printf("Red: %i, Green: %i, Blue: %i\n", red, green, blue);
+	rgb = (red << 16) + (green << 8) + blue;
+	return (rgb);
+}
+
+static void	check_line(char *line, t_map_data *map_data)
 {
 	char	*temp;
 
@@ -120,7 +166,7 @@ static void	check_line(char *line, map_data_t *map_data)
 	if (!map_data->floor && !ft_strncmp(skip_space(line), "F", 1))
 	{
 		temp = get_path(line);
-		map_data->floor = ft_atoi(temp);
+		map_data->floor = get_rgb(temp, map_data);
 		free(line);
 		free(temp);
 		return ;
@@ -128,7 +174,7 @@ static void	check_line(char *line, map_data_t *map_data)
 	if (!map_data->ceiling && !ft_strncmp(skip_space(line), "C", 1))
 	{
 		temp = get_path(line);
-		map_data->ceiling = ft_atoi(temp);
+		map_data->ceiling = get_rgb(temp, map_data);
 		free(line);
 		free(temp);
 		return ;
@@ -149,7 +195,7 @@ static void	check_line(char *line, map_data_t *map_data)
 }
 
 
-static void	get_map_data(map_data_t *map_data, int fd)
+static void	get_map_data(t_map_data *map_data, int fd)
 {
 	char	*read_file;
 
@@ -163,7 +209,7 @@ static void	get_map_data(map_data_t *map_data, int fd)
 	}
 }
 
-static void	check_eof(int fd, map_data_t *map_data)
+static void	check_eof(int fd, t_map_data *map_data)
 {
 	char	*line;
 
@@ -178,7 +224,7 @@ static void	check_eof(int fd, map_data_t *map_data)
 	}
 }
 
-static int	count_map_height(char *map_name, map_data_t *map_data)
+static int	count_map_height(char *map_name, t_map_data *map_data)
 {
 	int		fd;
 	char	*line;
@@ -212,7 +258,7 @@ static int	count_map_height(char *map_name, map_data_t *map_data)
 	return (height);
 }
 
-static bool	check_neighbor(map_data_t *map_data, int x, int y)
+static bool	check_neighbor(t_map_data *map_data, int x, int y)
 {
 	char top;
 	char bot;
@@ -240,7 +286,7 @@ static bool	check_neighbor(map_data_t *map_data, int x, int y)
 	return (true);
 }
 
-void	check_map(map_data_t *map_data)
+void	check_map(t_map_data *map_data)
 {
 	int	x;
 	int	y;
@@ -269,7 +315,7 @@ void	check_map(map_data_t *map_data)
 }
 
 
-void	init_map_data(char *map_name, map_data_t *map_data)
+void	init_map_data(char *map_name, t_map_data *map_data)
 {
 	int		fd;
 	
@@ -287,7 +333,7 @@ void	init_map_data(char *map_name, map_data_t *map_data)
 	if (fd < 0)
 		exit_error("Error: Can't open fd\n");
 	get_map_data(map_data, fd);
-	ft_printf("North:%s South:%s West:%s East:%s", map_data->no_text, map_data->so_text, map_data->we_text, map_data->ea_text);
+	ft_printf("North:%s South:%s West:%s East:%s\nRgb ceiling:%i Rgb floor:%i\n", map_data->no_text, map_data->so_text, map_data->we_text, map_data->ea_text, map_data->floor, map_data->ceiling);
 	check_map(map_data);
 	int i = 0;
 	while (i < map_data->map.y)

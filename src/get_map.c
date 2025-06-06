@@ -6,7 +6,7 @@
 /*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 11:11:32 by ctravers          #+#    #+#             */
-/*   Updated: 2025/06/05 12:33:45 by artperez         ###   ########.fr       */
+/*   Updated: 2025/06/06 11:23:16 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,18 @@ static char	*get_path(char *line)
 static void	get_map(char *line, t_map_data *map_data)
 {
 	static int	i;
+	int	j;
 
 	if (map_data->map.grid == NULL)
+	{
 		map_data->map.grid = malloc((map_data->map.y + 1) * sizeof(char *));
+		j = 0;
+		while (j <= map_data->map.y)
+		{
+			map_data->map.grid[j] = NULL;
+			j++;
+		}
+	}
 	map_data->map.grid[i] = ft_strdup(line);
 	map_data->map.grid[i][ft_strlen(line) - 1] = '\0';
 	i++;
@@ -62,13 +71,20 @@ static bool	is_alpha(char *line)
 	return (false);
 }
 
-static void	exit_and_free(char *line, char *msg, t_map_data *map_data)
+static void	exit_and_free(char *line, char *msg, t_map_data *map_data, int fd)
 {
 	int i;
+	char *cleanup_line;
 
 	i = 0;
 	if (line)
 		free(line);
+	if (fd >= 0)
+	{
+		while ((cleanup_line = get_next_line(fd)) != NULL)
+			free(cleanup_line);
+		close(fd);
+	}
 	if (map_data->map.grid)
 	{
 		while(i < map_data->map.y)
@@ -91,7 +107,7 @@ static void	exit_and_free(char *line, char *msg, t_map_data *map_data)
 	exit(1);
 }
 
-static char	*skip_figure_and_comma(char	*tmp, char *line, t_map_data *map_data)
+static char	*skip_figure_and_comma(char	*tmp, char *line, t_map_data *map_data, int fd)
 {
 	int	i;
 
@@ -106,11 +122,11 @@ static char	*skip_figure_and_comma(char	*tmp, char *line, t_map_data *map_data)
 		return (skip_space(tmp + i));
 	}
 	else
-		exit_and_free(line, "Error: Rgb, invalid format", map_data);
+		exit_and_free(line, "Error: Rgb, invalid format", map_data, fd);
 	return (NULL);
 }
 
-int	get_rgb(char *line, t_map_data *map_data)
+int	get_rgb(char *line, t_map_data *map_data, int fd)
 {
 	int	red;
 	int	green;
@@ -123,19 +139,22 @@ int	get_rgb(char *line, t_map_data *map_data)
 	red = -1;
 	tmp = line;
 	red = ft_atoi(tmp);
-	tmp = skip_figure_and_comma(tmp, line, map_data);
+	tmp = skip_figure_and_comma(tmp, line, map_data, fd);
 	green = ft_atoi(tmp);
-	tmp = skip_figure_and_comma(tmp, line, map_data);
+	tmp = skip_figure_and_comma(tmp, line, map_data, fd);
 	if (!is_alpha(tmp))
 		blue = ft_atoi(tmp);
 	if (red < 0 || red > 255 || green < 0 || green > 255 ||blue < 0 || blue > 255)
-		exit_and_free(line, "Error: Rgb, invalid format", map_data);
+	{
+		close(fd);
+		exit_and_free(line, "Error: Rgb, invalid format", map_data, fd);
+	}
 	ft_printf("Red: %i, Green: %i, Blue: %i\n", red, green, blue);
 	rgb = (red << 16) + (green << 8) + blue;
 	return (rgb);
 }
 
-static void	check_line(char *line, t_map_data *map_data)
+static void	check_line(char *line, t_map_data *map_data, int fd)
 {
 	char	*temp;
 
@@ -169,7 +188,7 @@ static void	check_line(char *line, t_map_data *map_data)
 	{
 		temp = get_path(line);
 		free(line);
-		map_data->floor = get_rgb(temp, map_data);
+		map_data->floor = get_rgb(temp, map_data, fd);
 		free(temp);
 		return ;
 	}	
@@ -177,7 +196,7 @@ static void	check_line(char *line, t_map_data *map_data)
 	{
 		temp = get_path(line);
 		free(line);
-		map_data->ceiling = get_rgb(temp, map_data);
+		map_data->ceiling = get_rgb(temp, map_data, fd);
 		free(temp);
 		return ;
 	}
@@ -188,11 +207,11 @@ static void	check_line(char *line, t_map_data *map_data)
 		return ;
 	}
 	else if (is_alpha(line) && is_data_init(map_data))
-		exit_and_free(line, "Error: Invalid character detected", map_data);
+		exit_and_free(line, "Error: Invalid character detected", map_data, fd);
 	else if (!ft_strncmp(skip_space(line), "1", 1) && !is_data_init(map_data))
-		exit_and_free(line, "Error: Missing data", map_data);
+		exit_and_free(line, "Error: Missing data", map_data, fd);
 	if (line[0] != '\n')
-		exit_and_free(line, "Error: Invalid character detected", map_data);
+		exit_and_free(line, "Error: Invalid character detected", map_data, fd);
 	free(line);
 }
 
@@ -206,9 +225,11 @@ static void	get_map_data(t_map_data *map_data, int fd)
 		exit_error("Error: file is empty\n");
 	while (read_file != NULL)
 	{
-		check_line(read_file, map_data);
+		check_line(read_file, map_data, fd);
 		read_file = get_next_line(fd);
 	}
+	if (!is_data_init(map_data))
+		exit_and_free(NULL, "Error: Missing data", map_data, fd);
 }
 
 static void	check_eof(int fd, t_map_data *map_data)
@@ -221,7 +242,7 @@ static void	check_eof(int fd, t_map_data *map_data)
 		if (!line)
 			break;
 		if (line && line[0] != '\n')
-			exit_and_free(line, "Error: Invalid map", map_data);
+			exit_and_free(line, "Error: Invalid map", map_data, fd);
 		free(line);
 	}
 }
@@ -288,7 +309,7 @@ static bool	check_neighbor(t_map_data *map_data, int x, int y)
 	return (true);
 }
 
-void	check_map(t_map_data *map_data)
+void	check_map(t_map_data *map_data, int fd)
 {
 	int	x;
 	int	y;
@@ -305,11 +326,11 @@ void	check_map(t_map_data *map_data)
 		while (x < len)
 		{
 			if (!check_neighbor(map_data, x, y))
-				exit_and_free(NULL, "Error: Unclosed map", map_data);
+				exit_and_free(NULL, "Error: Unclosed map", map_data, fd);
 			if ((y == 0 && map_data->map.grid[0][x] == '0') || (y == height - 1 && map_data->map.grid[height - 1][x] == '0'))
-				exit_and_free(NULL, "Error: Unclosed map", map_data);
+				exit_and_free(NULL, "Error: Unclosed map", map_data, fd);
 			if ((x == 0 && map_data->map.grid[y][0] == '0') || (x == len - 1 && map_data->map.grid[y][len - 1] == '0'))
-				exit_and_free(NULL, "Error: Unclosed map", map_data);
+				exit_and_free(NULL, "Error: Unclosed map", map_data, fd);
 			x++;
 		}
 		y++;
@@ -335,12 +356,12 @@ void	init_map_data(char *map_name, t_map_data *map_data)
 		exit_error("Error: Can't open fd\n");
 	get_map_data(map_data, fd);
 	ft_printf("North:%s South:%s West:%s East:%s\nRgb ceiling:%i Rgb floor:%i\n", map_data->no_text, map_data->so_text, map_data->we_text, map_data->ea_text, map_data->floor, map_data->ceiling);
-	check_map(map_data);
+	check_map(map_data, fd);
 	int i = 0;
 	while (i < map_data->map.y)
 	{
 		ft_printf("%s\n", map_data->map.grid[i]);
 		i++;
 	}
-	exit_and_free(NULL, "", map_data);
+	exit_and_free(NULL, "", map_data, fd);
 }

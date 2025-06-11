@@ -6,7 +6,7 @@ OBJDIR = obj/
 LIBFTDIR = libft
 MLXDIR = minilibx-linux
 
-SRC_FILES = main input_management utils get_map init_data
+SRC_FILES = main input_management utils get_map init_data raycast
 SRC = $(addprefix $(SRCDIR), $(addsuffix .c, $(SRC_FILES)))
 OBJ = $(addprefix $(OBJDIR), $(addsuffix .o, $(SRC_FILES)))
 NAME = cub3D
@@ -34,7 +34,7 @@ $(LIBFT):
 	@make --no-print-directory -C $(LIBFTDIR)
 
 $(MLX):
-	@make -C (MLXDIR)
+	@make -C $(MLXDIR)
 
 clean:
 	@rm -rf $(OBJDIR)

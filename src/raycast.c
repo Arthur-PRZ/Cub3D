@@ -1,23 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   raycast.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/02 09:58:02 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/11 09:24:45 by artperez         ###   ########.fr       */
+/*   Created: 2025/06/10 13:55:08 by artperez          #+#    #+#             */
+/*   Updated: 2025/06/11 09:24:37 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/cub3D.h"
 
-int main(int argc, char **argv)
-{
-	t_data	data;
-	
-    check_input(argc, argv[1]);
-	init_map_data(argv[1], &data);
-	init_data(&data);
-	// raycast(&data);
-}
+// static void init_raycast(t_data *data)
+// {
+//     (void)data;
+//     ft_printf("ok");
+// }
+
+// void    raycast(t_data *data)
+// {
+//     ft_printf("ok");
+//     init_raycast(data);
+// }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3D.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
+/*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 10:03:46 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/06 14:09:29 by ctravers         ###   ########.fr       */
+/*   Updated: 2025/06/10 14:45:36 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,30 @@ typedef struct	s_img
 	int		endian;
 }			t_img;
 
+typedef struct s_raycast
+{
+	double	pos_x;
+	double	pos_y;
+	float	plane_x;
+	float	plane_y;
+	float	sidedist_x;
+	float	sidedist_y;
+	float	deltadist_x;
+	float	deltadist_y;
+	float	camera_x;
+	float	raydir_x;
+	float	raydir_y;
+	float	perpwalldist;
+	bool	is_wall;
+	int		map_y;
+	int		map_x;
+	int		dir_x;
+	int		dir_y;
+	int		side;
+	int		step_x;
+	int		step_y;
+}		t_raycast;
+
 typedef struct	s_textures
 {
 	void	*so_text;
@@ -78,11 +102,12 @@ typedef struct s_data
 {
 	void	*mlx;
 	void	*win;
+	int		offset;
+	t_raycast raycast;
 	t_map_data	map_data;
 	t_textures	textures;
 	t_img	ceiling;
 	t_img	floor;
-	int		offset;
 }		t_data;
 
 void	check_input(int args_nbr, char *input);
@@ -92,5 +117,6 @@ void	exit_error(char *msg);
 char	*skip_space(char *line);
 void    init_data(t_data *data);
 void	exit_and_free(char *line, char *msg, t_data *data, int fd);
+// void    raycast(t_data *data);
 
 #endif

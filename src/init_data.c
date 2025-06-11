@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_data.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
+/*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 11:46:28 by ctravers          #+#    #+#             */
-/*   Updated: 2025/06/06 14:14:29 by ctravers         ###   ########.fr       */
+/*   Updated: 2025/06/10 09:53:14 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,6 @@ static void	init_texture(t_data *data)
 	int	i;
 
 	i = 64;
-	data->textures.so_text = NULL;
-	data->textures.ea_text = NULL;
-	data->textures.no_text = NULL;
-	data->textures.we_text = NULL;
 	data->textures.so_text = mlx_xpm_file_to_image(data->mlx, data->map_data.path_so_text, &i, &i);
 	if (!data->textures.so_text)
 		exit_and_free(NULL, "Failed to load south texture", data, -1);

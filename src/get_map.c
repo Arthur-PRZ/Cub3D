@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_map.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
+/*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 11:11:32 by ctravers          #+#    #+#             */
-/*   Updated: 2025/06/06 14:22:19 by ctravers         ###   ########.fr       */
+/*   Updated: 2025/06/11 09:21:17 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,9 @@ static void	get_map(char *line, t_map_data *map_data)
 
 static bool	is_data_init(t_map_data *map_data)
 {
-	if (map_data->ceiling && map_data->path_so_text 
-		&& map_data->path_no_text && map_data->path_ea_text && map_data->path_we_text && map_data->floor)
-		return (true);
+	if (map_data->ceiling >= 0 && map_data->path_so_text 
+		&& map_data->path_no_text && map_data->path_ea_text && map_data->path_we_text && map_data->floor >= 0)
+			return (true);
 	return (false);
 }
 
@@ -159,7 +159,7 @@ int	get_rgb(char *line, t_data *data, int fd)
 	tmp = skip_figure_and_comma(tmp, line, data, fd);
 	if (!is_alpha(tmp))
 		blue = ft_atoi(tmp);
-	if (red < 0 || red > 255 || green < 0 || green > 255 ||blue < 0 || blue > 255)
+	if ((red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255))
 	{
 		close(fd);
 		exit_and_free(line, "Error: Rgb, invalid format", data, fd);
@@ -199,15 +199,16 @@ static void	check_line(char *line, t_data *data, int fd)
 		free(line);
 		return ;
 	}
-	if (!data->map_data.floor && !ft_strncmp(skip_space(line), "F", 1))
+	if (data->map_data.floor == -1 && !ft_strncmp(skip_space(line), "F", 1))
 	{
 		temp = get_path(line);
 		free(line);
 		data->map_data.floor = get_rgb(temp, data, fd);
+		ft_printf("%i\n", data->map_data.floor);
 		free(temp);
 		return ;
 	}	
-	if (!data->map_data.ceiling && !ft_strncmp(skip_space(line), "C", 1))
+	if (data->map_data.ceiling == -1 && !ft_strncmp(skip_space(line), "C", 1))
 	{
 		temp = get_path(line);
 		free(line);
@@ -324,15 +325,19 @@ static bool	check_neighbor(t_map_data *map_data, int x, int y)
 	return (true);
 }
 
+#include <stdio.h>
+
 void	check_map(t_data *data, int fd)
 {
 	int	x;
 	int	y;
 	int height;
 	int	len;
+	char	curr;
 
 	y = 0;
 	len = 0;
+	data->raycast.pos_x = -1;
 	height = data->map_data.map.y;
 	while (y < height)
 	{
@@ -340,6 +345,15 @@ void	check_map(t_data *data, int fd)
 		len = (int)ft_strlen(data->map_data.map.grid[y]);
 		while (x < len)
 		{
+			curr = data->map_data.map.grid[y][x];
+			if ((curr == 'W' || curr == 'E' || curr == 'N' || curr == 'S') && data->raycast.pos_x != -1)
+				exit_and_free(NULL, "Error: Too much spawn points", data, fd);
+			if (curr == 'W' || curr == 'E' || curr == 'N' || curr == 'S')
+			{
+				data->raycast.pos_x = x;
+				data->raycast.pos_y = y;
+				printf("%f, %f\n", data->raycast.pos_x, data->raycast.pos_y);
+			}
 			if (!check_neighbor(&data->map_data, x, y))
 				exit_and_free(NULL, "Error: Unclosed map", data, fd);
 			if ((y == 0 && data->map_data.map.grid[0][x] == '0') || (y == height - 1 && data->map_data.map.grid[height - 1][x] == '0'))
@@ -350,6 +364,8 @@ void	check_map(t_data *data, int fd)
 		}
 		y++;
 	}
+	if (data->raycast.pos_x == -1)
+		exit_and_free(NULL, "Error: No spawn point found", data, fd);
 }
 
 
@@ -357,14 +373,20 @@ void	init_map_data(char *map_name, t_data *data)
 {
 	int		fd;
 	
-	data->map_data.ceiling = 0;
-	data->map_data.floor = 0;
+	data->map_data.ceiling = -1;
+	data->map_data.floor = -1;
 	data->map_data.map.y = 0;
 	data->map_data.path_no_text = NULL;
 	data->map_data.path_so_text = NULL;
 	data->map_data.path_we_text = NULL;
 	data->map_data.path_ea_text = NULL;
 	data->map_data.map.grid = NULL;
+	data->textures.so_text = NULL;
+	data->textures.ea_text = NULL;
+	data->textures.no_text = NULL;
+	data->textures.we_text = NULL;
+	data->win = NULL;
+	data->mlx = NULL;
 	data->map_data.map.y = count_map_height(map_name, data);
 	fd = open(map_name, O_RDONLY);
 	if (fd < 0)

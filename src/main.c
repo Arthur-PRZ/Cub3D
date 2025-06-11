@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 09:58:02 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/11 09:24:45 by artperez         ###   ########.fr       */
+/*   Updated: 2025/06/11 12:45:11 by ctravers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,9 @@
 int main(int argc, char **argv)
 {
 	t_data	data;
-	
+
     check_input(argc, argv[1]);
 	init_map_data(argv[1], &data);
 	init_data(&data);
-	// raycast(&data);
+	raycast(&data);
 }

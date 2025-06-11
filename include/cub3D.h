@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3D.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 10:03:46 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/10 14:45:36 by artperez         ###   ########.fr       */
+/*   Updated: 2025/06/11 12:27:42 by ctravers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,11 @@
 
 #include <unistd.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <math.h>
 #include "../libft/include/libft.h"
 #include "../libft/include/ft_printf.h"
 #include "../libft/include/get_next_line_bonus.h"
-#include <stdbool.h>
 #include "../minilibx-linux/mlx.h"
 
 typedef struct	s_map
@@ -70,16 +71,16 @@ typedef struct s_raycast
 {
 	double	pos_x;
 	double	pos_y;
-	float	plane_x;
-	float	plane_y;
-	float	sidedist_x;
-	float	sidedist_y;
-	float	deltadist_x;
-	float	deltadist_y;
-	float	camera_x;
-	float	raydir_x;
-	float	raydir_y;
-	float	perpwalldist;
+	double	plane_x;
+	double	plane_y;
+	double	sidedist_x;
+	double	sidedist_y;
+	double	deltadist_x;
+	double	deltadist_y;
+	double	camera_x;
+	double	raydir_x;
+	double	raydir_y;
+	double	perpwalldist;
 	bool	is_wall;
 	int		map_y;
 	int		map_x;
@@ -88,6 +89,9 @@ typedef struct s_raycast
 	int		side;
 	int		step_x;
 	int		step_y;
+	int		lineheight;
+	int		drawstart;
+	int		drawend;
 }		t_raycast;
 
 typedef struct	s_textures
@@ -107,6 +111,7 @@ typedef struct s_data
 	t_map_data	map_data;
 	t_textures	textures;
 	t_img	ceiling;
+	t_img	wall;
 	t_img	floor;
 }		t_data;
 
@@ -117,6 +122,6 @@ void	exit_error(char *msg);
 char	*skip_space(char *line);
 void    init_data(t_data *data);
 void	exit_and_free(char *line, char *msg, t_data *data, int fd);
-// void    raycast(t_data *data);
+void    raycast(t_data *data);
 
 #endif

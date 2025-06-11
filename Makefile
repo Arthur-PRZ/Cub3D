@@ -34,7 +34,7 @@ $(LIBFT):
 	@make --no-print-directory -C $(LIBFTDIR)
 
 $(MLX):
-	@make -C $(MLXDIR)
+	@make --no-print-directory -C $(MLXDIR)
 
 clean:
 	@rm -rf $(OBJDIR)
@@ -44,6 +44,7 @@ clean:
 fclean: clean
 	@rm -rf $(NAME)
 	@make fclean --no-print-directory -C $(LIBFTDIR)
+	@make clean --no-print-directory -C $(MLXDIR)
 	@echo "$(G)All clean$(RST)"
 
 re: fclean all

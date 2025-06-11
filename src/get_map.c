@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_map.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 11:11:32 by ctravers          #+#    #+#             */
-/*   Updated: 2025/06/11 09:21:17 by artperez         ###   ########.fr       */
+/*   Updated: 2025/06/11 12:33:20 by ctravers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -325,8 +325,6 @@ static bool	check_neighbor(t_map_data *map_data, int x, int y)
 	return (true);
 }
 
-#include <stdio.h>
-
 void	check_map(t_data *data, int fd)
 {
 	int	x;
@@ -350,9 +348,28 @@ void	check_map(t_data *data, int fd)
 				exit_and_free(NULL, "Error: Too much spawn points", data, fd);
 			if (curr == 'W' || curr == 'E' || curr == 'N' || curr == 'S')
 			{
+				if (curr == 'W')
+				{
+					data->raycast.dir_x = -1;
+					data->raycast.dir_y = 0;
+				}
+				if (curr == 'N')
+				{
+					data->raycast.dir_x = 0;
+					data->raycast.dir_y = 1;
+				}
+				if (curr == 'S')
+				{
+					data->raycast.dir_x = 0;
+					data->raycast.dir_y = -1;
+				}
+				if (curr == 'E')
+				{
+					data->raycast.dir_x = 1;
+					data->raycast.dir_y = 0;
+				}				
 				data->raycast.pos_x = x;
 				data->raycast.pos_y = y;
-				printf("%f, %f\n", data->raycast.pos_x, data->raycast.pos_y);
 			}
 			if (!check_neighbor(&data->map_data, x, y))
 				exit_and_free(NULL, "Error: Unclosed map", data, fd);

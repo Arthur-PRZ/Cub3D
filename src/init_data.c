@@ -37,14 +37,14 @@ static void	display_ceiling_and_floor(t_data *data)
 	int	y;
 	
 	y = 0;
-	data->ceiling.img = mlx_new_image(data->mlx, 1920, 1080 / 2);
-	data->floor.img = mlx_new_image(data->mlx, 1920, 1080 / 2);
+	data->ceiling.img = mlx_new_image(data->mlx, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
+	data->floor.img = mlx_new_image(data->mlx, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
 	data->ceiling.addr = mlx_get_data_addr(data->ceiling.img, &data->ceiling.bpp, &data->ceiling.size_line, &data->ceiling.endian);
 	data->floor.addr = mlx_get_data_addr(data->floor.img, &data->floor.bpp, &data->floor.size_line, &data->floor.endian);
-	while(y < (1080 / 2))
+	while(y < (SCREEN_HEIGHT / 2))
 	{
 		x = 0;
-		while(x < 1920)
+		while(x < SCREEN_WIDTH)
 		{
 			data->offset = y * data->ceiling.size_line + x * (data->ceiling.bpp / 8);
 			data->ceiling.addr[data->offset + 0] = (data->map_data.ceiling & 0x0000FF);
@@ -55,10 +55,10 @@ static void	display_ceiling_and_floor(t_data *data)
 		y++;
 	}
 	y = 0;
-	while(y < (1080 / 2))
+	while(y < (SCREEN_HEIGHT / 2))
 	{
 		x = 0;
-		while(x < 1920)
+		while(x < SCREEN_WIDTH)
 		{
 			data->offset = y * data->floor.size_line + x * (data->ceiling.bpp / 8);
 			data->floor.addr[data->offset + 0] = (data->map_data.floor & 0x0000FF);
@@ -69,7 +69,7 @@ static void	display_ceiling_and_floor(t_data *data)
 		y++;
 	}
 	mlx_put_image_to_window(data->mlx, data->win, data->ceiling.img, 0, 0);
-	mlx_put_image_to_window(data->mlx, data->win, data->floor.img, 0, 1080 / 2);
+	mlx_put_image_to_window(data->mlx, data->win, data->floor.img, 0, SCREEN_HEIGHT / 2);
 }
 
 void	init_data(t_data *data)
@@ -77,7 +77,7 @@ void	init_data(t_data *data)
 	data->mlx = mlx_init();
 	if (!data->mlx)
 		exit_and_free(NULL, "Error: Failed to init MLX", data, -1);
-	data->win = mlx_new_window(data->mlx, 1920, 1080, "cub3D");
+	data->win = mlx_new_window(data->mlx, SCREEN_WIDTH, SCREEN_HEIGHT, "cub3D");
 	if (!data->mlx)
 		exit_and_free(NULL, "Error: Failed to init MLX", data, -1);
 	init_texture(data);

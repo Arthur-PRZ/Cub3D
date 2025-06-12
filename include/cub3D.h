@@ -22,6 +22,10 @@
 #include "../libft/include/get_next_line_bonus.h"
 #include "../minilibx-linux/mlx.h"
 
+# define SCREEN_HEIGHT 1080
+# define SCREEN_WIDTH 1920
+# define PLANE_Y 0.66
+
 typedef struct	s_map
 {
 	int		y;

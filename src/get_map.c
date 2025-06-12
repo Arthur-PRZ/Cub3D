@@ -319,7 +319,6 @@ static bool	check_neighbor(t_map_data *map_data, int x, int y)
 	if (map_data->map.grid[y][x] == '0' && ((top == ' ' || top == '\0') || (bot == '\0' || bot == ' ')
 		|| (left == '\0' || left == ' ') || (right == '\0' || right == ' ')))
 	{
-		//ft_printf("Top: %c, Bot: %c, Right: %c, Left: %c, pos x: %i, pos y: %i, char: %c\n", top, bot, right, left, x, y, map_data->map.grid[y][x]);
 		return (false);
 	}
 	return (true);

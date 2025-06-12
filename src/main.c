@@ -19,5 +19,4 @@ int main(int argc, char **argv)
     check_input(argc, argv[1]);
 	init_map_data(argv[1], &data);
 	init_data(&data);
-	raycast(&data);
 }

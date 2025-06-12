@@ -355,12 +355,12 @@ void	check_map(t_data *data, int fd)
 				if (curr == 'N')
 				{
 					data->raycast.dir_x = 0;
-					data->raycast.dir_y = 1;
+					data->raycast.dir_y = -1;
 				}
 				if (curr == 'S')
 				{
 					data->raycast.dir_x = 0;
-					data->raycast.dir_y = -1;
+					data->raycast.dir_y = 1;
 				}
 				if (curr == 'E')
 				{

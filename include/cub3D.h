@@ -114,9 +114,7 @@ typedef struct s_data
 	t_raycast raycast;
 	t_map_data	map_data;
 	t_textures	textures;
-	t_img	ceiling;
-	t_img	wall;
-	t_img	floor;
+	t_img	scene;
 }		t_data;
 
 void	check_input(int args_nbr, char *input);

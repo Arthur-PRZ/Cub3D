@@ -14,28 +14,51 @@
 
 static void put_pixel(t_data *data, int x, int y, int color)
 {
-    if (x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_WIDTH)
+    if (x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT)
         return;
 
-    char *dst = data->wall.addr + (y * data->wall.size_line + x * (data->wall.bpp / 8));
+    char *dst = data->scene.addr + (y * data->scene.size_line + x * (data->scene.bpp / 8));
     *(unsigned int*)dst = color;
 }
 
 static void draw_vertical_line(t_data *data, int x, int y_start, int y_end, int color)
 {
+	int	y;
+
+	y = 0;
     if (y_start < 0)
 		y_start = 0;
     if (y_end >= SCREEN_HEIGHT)
 		y_end = SCREEN_HEIGHT - 1;
-    for (int y = y_start; y <= y_end; y++)
+    y = y_start;
+    while (y <= y_end)
     {
         put_pixel(data, x, y, color);
+		y++;
+    }
+}
+
+static void draw_ceiling_and_floor_column(t_data *data, int x, int wall_start, int wall_end)
+{
+    int y;
+    
+    y = 0;
+    while (y < wall_start)
+    {
+        put_pixel(data, x, y, data->map_data.ceiling);
+        y++;
+    }
+    y = wall_end + 1;
+    while (y < SCREEN_HEIGHT)
+    {
+        put_pixel(data, x, y, data->map_data.floor);
+        y++;
     }
 }
 
 static void	init_ray_params(t_data *data, int x)
 {
-	data->raycast.camera_x = 2 * x / SCREEN_WIDTH - 1;
+	data->raycast.camera_x = 2.0 * x / (double)SCREEN_WIDTH - 1.0;
 	data->raycast.raydir_x = data->raycast.dir_x + data->raycast.plane_x * data->raycast.camera_x;
 	data->raycast.raydir_y = data->raycast.dir_y + data->raycast.plane_y * data->raycast.camera_x;
 	data->raycast.map_x = (int)data->raycast.pos_x;
@@ -95,7 +118,7 @@ static void	dda_algo(t_data *data)
 			data->raycast.map_y += data->raycast.step_y;
 			data->raycast.side = 1;			
 		}
-		if (data->map_data.map.grid[data->raycast.map_y][data->raycast.map_x] > 0)
+		if (data->map_data.map.grid[data->raycast.map_y][data->raycast.map_x] == '1')
 			data->raycast.is_wall = true;
 	}
 }
@@ -119,21 +142,43 @@ static void	find_draw_coords(t_data *data)
 		data->raycast.drawend = SCREEN_HEIGHT - 1;
 }
 
+static int	get_wall_color(t_data *data)
+{
+	if (data->raycast.side == 0)
+	{
+		if (data->raycast.step_x > 0)
+			return (0x00FF0000); 
+		else
+			return (0x0000FF00);
+	}
+	else
+	{
+		if (data->raycast.step_y > 0)
+			return (0x00808080);
+		else
+			return (0x000000FF); 
+	}
+}
+
 static void	process_raycast_column(t_data *data, int x)
 {
+	int color;
+
 	init_ray_params(data, x);
 	find_delta_dist(data);
 	find_step_and_sidedist(data);
 	dda_algo(data);
 	find_wall_dist(data);
 	find_draw_coords(data);
-	draw_vertical_line(data, x, data->raycast.drawstart, data->raycast.drawend, 0x0000FF);
+	draw_ceiling_and_floor_column(data, x, data->raycast.drawstart, data->raycast.drawend);
+	color = get_wall_color(data);
+	draw_vertical_line(data, x, data->raycast.drawstart, data->raycast.drawend, color);
 }
 
-static void	init_wall_img(t_data *data)
+static void	init_scene_img(t_data *data)
 {
-	data->wall.img = mlx_new_image(data->mlx, SCREEN_WIDTH, SCREEN_HEIGHT);
-	data->wall.addr = mlx_get_data_addr(data->wall.img, &data->wall.bpp, &data->wall.size_line, &data->wall.endian);
+	data->scene.img = mlx_new_image(data->mlx, SCREEN_WIDTH, SCREEN_HEIGHT);
+	data->scene.addr = mlx_get_data_addr(data->scene.img, &data->scene.bpp, &data->scene.size_line, &data->scene.endian);
 }
 
 void    raycast(t_data *data)
@@ -143,10 +188,11 @@ void    raycast(t_data *data)
 	x = 0;
 	data->raycast.plane_x = 0;
 	data->raycast.plane_y = PLANE_Y;
-	init_wall_img(data);
+	init_scene_img(data);
 	while (x < SCREEN_WIDTH)
 	{
 		process_raycast_column(data, x);
 		x++;
 	}
+	mlx_put_image_to_window(data->mlx, data->win, data->scene.img, 0, 0);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3D.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
+/*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 10:03:46 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/11 12:27:42 by ctravers         ###   ########.fr       */
+/*   Updated: 2025/06/13 13:51:57 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,17 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>
+#include <X11/keysym.h>
+#include <sys/time.h>
 #include "../libft/include/libft.h"
 #include "../libft/include/ft_printf.h"
 #include "../libft/include/get_next_line_bonus.h"
 #include "../minilibx-linux/mlx.h"
+#include <stdio.h>
 
 # define SCREEN_HEIGHT 1080
 # define SCREEN_WIDTH 1920
-# define PLANE_Y 0.66
+# define PLANE 0.66
 
 typedef struct	s_map
 {
@@ -111,6 +114,9 @@ typedef struct s_data
 	void	*mlx;
 	void	*win;
 	int		offset;
+	double	move_speed;
+	double	rot_speed;
+	double	old_time;
 	t_raycast raycast;
 	t_map_data	map_data;
 	t_textures	textures;
@@ -125,5 +131,8 @@ char	*skip_space(char *line);
 void    init_data(t_data *data);
 void	exit_and_free(char *line, char *msg, t_data *data, int fd);
 void    raycast(t_data *data);
+void	movements(t_data *data);
+double	get_time();
+int		game_loop(t_data *data);
 
 #endif

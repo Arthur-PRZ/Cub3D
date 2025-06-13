@@ -6,7 +6,7 @@ OBJDIR = obj/
 LIBFTDIR = libft
 MLXDIR = minilibx-linux
 
-SRC_FILES = main input_management utils get_map init_data raycast
+SRC_FILES = main input_management utils get_map init_data raycast movements
 SRC = $(addprefix $(SRCDIR), $(addsuffix .c, $(SRC_FILES)))
 OBJ = $(addprefix $(OBJDIR), $(addsuffix .o, $(SRC_FILES)))
 NAME = cub3D
@@ -19,7 +19,7 @@ RST = \033[0m
 all: $(OBJDIR) $(NAME)
 
 $(NAME): $(LIBFT) $(MLX) $(OBJ)
-	@$(CC) $(CFLAGS) $(OBJ) -o $(NAME) -L$(LIBFTDIR) -L$(MLXDIR) -lftprintf -lmlx -lXext -lX11
+	@$(CC) $(CFLAGS) $(OBJ) -o $(NAME) -L$(LIBFTDIR) -L$(MLXDIR) -lftprintf -lmlx -lm -lXext -lX11
 	@echo "$(G)Compilation done!$(RST)"
 
 $(OBJDIR)%.o: $(SRCDIR)%.c

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_map.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
+/*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 11:11:32 by ctravers          #+#    #+#             */
-/*   Updated: 2025/06/11 12:33:20 by ctravers         ###   ########.fr       */
+/*   Updated: 2025/06/13 13:53:39 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,11 +85,11 @@ void	exit_and_free(char *line, char *msg, t_data *data, int fd)
 			free(cleanup_line);
 		close(fd);
 	}
-	if (data->map_data.map.grid)
+	if (data && data->map_data.map.grid)
 	{
 		while(i < data->map_data.map.y)
 		{
-			if (data->map_data.map.grid[i])
+			if (data && data->map_data.map.grid[i])
 				free(data->map_data.map.grid[i]);
 			i++;
 		}
@@ -111,6 +111,8 @@ void	exit_and_free(char *line, char *msg, t_data *data, int fd)
 		mlx_destroy_image(data->mlx, data->textures.we_text);
 	if (data && data->textures.ea_text)
 		mlx_destroy_image(data->mlx, data->textures.ea_text);
+	if (data && data->scene.img)
+        mlx_destroy_image(data->mlx, data->scene.img);
 	if (data && data->win)
 		mlx_destroy_window(data->mlx, data->win);
 	if (data && data->mlx)
@@ -351,24 +353,32 @@ void	check_map(t_data *data, int fd)
 				{
 					data->raycast.dir_x = -1;
 					data->raycast.dir_y = 0;
+					data->raycast.plane_x = 0;
+					data->raycast.plane_y = -PLANE;
 				}
 				if (curr == 'N')
 				{
 					data->raycast.dir_x = 0;
 					data->raycast.dir_y = -1;
+					data->raycast.plane_x = -PLANE;
+					data->raycast.plane_y = 0;
 				}
 				if (curr == 'S')
 				{
 					data->raycast.dir_x = 0;
 					data->raycast.dir_y = 1;
+					data->raycast.plane_x = PLANE;
+					data->raycast.plane_y = 0;
 				}
 				if (curr == 'E')
 				{
 					data->raycast.dir_x = 1;
 					data->raycast.dir_y = 0;
+					data->raycast.plane_x = 0;
+					data->raycast.plane_y = PLANE;
 				}				
-				data->raycast.pos_x = x;
-				data->raycast.pos_y = y;
+				data->raycast.pos_x = x + 0.5;
+				data->raycast.pos_y = y + 0.5;
 			}
 			if (!check_neighbor(&data->map_data, x, y))
 				exit_and_free(NULL, "Error: Unclosed map", data, fd);

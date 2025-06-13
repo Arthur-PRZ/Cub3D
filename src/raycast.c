@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycast.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
+/*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 13:55:08 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/11 12:32:44 by ctravers         ###   ########.fr       */
+/*   Updated: 2025/06/13 13:51:04 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,11 @@
 
 static void put_pixel(t_data *data, int x, int y, int color)
 {
+	char *dst;
+
     if (x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT)
         return;
-
-    char *dst = data->scene.addr + (y * data->scene.size_line + x * (data->scene.bpp / 8));
+    dst = data->scene.addr + (y * data->scene.size_line + x * (data->scene.bpp / 8));
     *(unsigned int*)dst = color;
 }
 
@@ -180,15 +181,15 @@ static void	init_scene_img(t_data *data)
 	data->scene.img = mlx_new_image(data->mlx, SCREEN_WIDTH, SCREEN_HEIGHT);
 	data->scene.addr = mlx_get_data_addr(data->scene.img, &data->scene.bpp, &data->scene.size_line, &data->scene.endian);
 }
-
 void    raycast(t_data *data)
 {
 	int	x;
 
 	x = 0;
-	data->raycast.plane_x = 0;
-	data->raycast.plane_y = PLANE_Y;
-	init_scene_img(data);
+
+    if (data->scene.img)
+        mlx_destroy_image(data->mlx, data->scene.img);
+    init_scene_img(data);
 	while (x < SCREEN_WIDTH)
 	{
 		process_raycast_column(data, x);

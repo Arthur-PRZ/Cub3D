@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   init_data.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
+/*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 11:46:28 by ctravers          #+#    #+#             */
-/*   Updated: 2025/06/11 12:43:34 by ctravers         ###   ########.fr       */
+/*   Updated: 2025/06/13 12:24:07 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/cub3D.h"
+
+
 
 static void	init_texture(t_data *data)
 {
@@ -34,12 +36,13 @@ static void	init_texture(t_data *data)
 void	init_data(t_data *data)
 {
 	data->mlx = mlx_init();
+	data->old_time = 0;
+	data->scene.img = NULL;
 	if (!data->mlx)
 		exit_and_free(NULL, "Error: Failed to init MLX", data, -1);
 	data->win = mlx_new_window(data->mlx, SCREEN_WIDTH, SCREEN_HEIGHT, "cub3D");
 	if (!data->mlx)
 		exit_and_free(NULL, "Error: Failed to init MLX", data, -1);
 	init_texture(data);
-	raycast(data);
-	mlx_loop(data->mlx);
+    raycast(data);
 }

@@ -6,7 +6,7 @@
 /*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 09:58:02 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/13 12:05:21 by artperez         ###   ########.fr       */
+/*   Updated: 2025/06/13 15:34:11 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@ int	game_loop(t_data *data)
     }
 	frame_time = current_time - data->old_time;
 	data->old_time = current_time;
-	data->move_speed = frame_time * 5.0;
-    data->rot_speed = frame_time * 3.0;
-	printf("%f\n", 1.0 / frame_time);
+	data->move_speed = frame_time * 2.0;
+    data->rot_speed = frame_time * 2.5;
+	handle_movement(data);
     raycast(data);
 	return (0);
 }

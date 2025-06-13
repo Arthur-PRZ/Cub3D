@@ -6,7 +6,7 @@
 /*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 10:03:46 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/13 13:51:57 by artperez         ###   ########.fr       */
+/*   Updated: 2025/06/13 15:47:05 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,15 @@ typedef struct s_dir
 	int	y;
 }	t_dir;
 
+typedef struct s_keys
+{
+	bool	w_pressed;
+	bool	a_pressed;
+	bool	d_pressed;
+	bool	s_pressed;
+	bool	left_pressed;
+	bool	right_pressed;
+}		t_keys;
 
 typedef struct s_player
 {
@@ -88,11 +97,11 @@ typedef struct s_raycast
 	double	raydir_x;
 	double	raydir_y;
 	double	perpwalldist;
+	double		dir_x;
+	double		dir_y;
 	bool	is_wall;
 	int		map_y;
 	int		map_x;
-	int		dir_x;
-	int		dir_y;
 	int		side;
 	int		step_x;
 	int		step_y;
@@ -101,13 +110,20 @@ typedef struct s_raycast
 	int		drawend;
 }		t_raycast;
 
-typedef struct	s_textures
+typedef struct s_textures
 {
 	void	*so_text;
 	void	*no_text;
 	void	*we_text;
-	void	*ea_text;	
+	void	*ea_text;
+	int		*so_data;
+	int		*no_data;
+	int		*we_data;
+	int		*ea_data;
+	int		width;
+	int		height;
 }	t_textures;
+
 
 typedef struct s_data
 {
@@ -121,6 +137,7 @@ typedef struct s_data
 	t_map_data	map_data;
 	t_textures	textures;
 	t_img	scene;
+	t_keys	keys;
 }		t_data;
 
 void	check_input(int args_nbr, char *input);
@@ -134,5 +151,6 @@ void    raycast(t_data *data);
 void	movements(t_data *data);
 double	get_time();
 int		game_loop(t_data *data);
+void	handle_movement(t_data *data);
 
 #endif

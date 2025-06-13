@@ -6,21 +6,11 @@
 /*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 13:55:08 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/13 13:51:04 by artperez         ###   ########.fr       */
+/*   Updated: 2025/06/13 15:52:41 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/cub3D.h"
-
-static void put_pixel(t_data *data, int x, int y, int color)
-{
-	char *dst;
-
-    if (x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT)
-        return;
-    dst = data->scene.addr + (y * data->scene.size_line + x * (data->scene.bpp / 8));
-    *(unsigned int*)dst = color;
-}
 
 static void draw_vertical_line(t_data *data, int x, int y_start, int y_end, int color)
 {
@@ -34,7 +24,7 @@ static void draw_vertical_line(t_data *data, int x, int y_start, int y_end, int 
     y = y_start;
     while (y <= y_end)
     {
-        put_pixel(data, x, y, color);
+		*(int *)(data->scene.addr + (y * data->scene.size_line + x * (data->scene.bpp / 8))) = color;
 		y++;
     }
 }
@@ -46,13 +36,13 @@ static void draw_ceiling_and_floor_column(t_data *data, int x, int wall_start, i
     y = 0;
     while (y < wall_start)
     {
-        put_pixel(data, x, y, data->map_data.ceiling);
+        *(int *)(data->scene.addr + (y * data->scene.size_line + x * (data->scene.bpp / 8))) = data->map_data.ceiling;
         y++;
     }
     y = wall_end + 1;
     while (y < SCREEN_HEIGHT)
     {
-        put_pixel(data, x, y, data->map_data.floor);
+        *(int *)(data->scene.addr + (y * data->scene.size_line + x * (data->scene.bpp / 8))) = data->map_data.floor;
         y++;
     }
 }
@@ -139,9 +129,18 @@ static void	find_draw_coords(t_data *data)
 	if (data->raycast.drawstart < 0)
 		data->raycast.drawstart = 0;
 	data->raycast.drawend = data->raycast.lineheight / 2 + SCREEN_HEIGHT / 2;
-	if (data->raycast.drawend >= SCREEN_HEIGHT)
-		data->raycast.drawend = SCREEN_HEIGHT - 1;
+
 }
+
+// void	draw_wall_all(t_data *data)
+// {
+// 	int *img;
+
+// 	img = (int *)data->scene.img;
+
+// 	*img = 0;
+// 	img++;
+// }
 
 static int	get_wall_color(t_data *data)
 {
@@ -160,7 +159,6 @@ static int	get_wall_color(t_data *data)
 			return (0x000000FF); 
 	}
 }
-
 static void	process_raycast_column(t_data *data, int x)
 {
 	int color;

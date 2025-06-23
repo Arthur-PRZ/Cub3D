@@ -3,30 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   raycast.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 13:55:08 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/13 15:52:41 by artperez         ###   ########.fr       */
+/*   Updated: 2025/06/23 10:52:36 by ctravers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/cub3D.h"
 
-static void draw_vertical_line(t_data *data, int x, int y_start, int y_end, int color)
+static int	get_current_bpp(t_data *data)
 {
-	int	y;
-
-	y = 0;
-    if (y_start < 0)
-		y_start = 0;
-    if (y_end >= SCREEN_HEIGHT)
-		y_end = SCREEN_HEIGHT - 1;
-    y = y_start;
-    while (y <= y_end)
-    {
-		*(int *)(data->scene.addr + (y * data->scene.size_line + x * (data->scene.bpp / 8))) = color;
-		y++;
-    }
+	if (data->raycast.side == 0)
+	{
+		if (data->raycast.step_x > 0)
+			return (data->textures.ea_bpp);
+		else
+			return (data->textures.we_bpp);
+	}
+	else
+	{
+		if (data->raycast.step_y > 0)
+			return (data->textures.so_bpp);
+		else
+			return (data->textures.no_bpp); 
+	}
 }
 
 static void draw_ceiling_and_floor_column(t_data *data, int x, int wall_start, int wall_end)
@@ -142,27 +143,84 @@ static void	find_draw_coords(t_data *data)
 // 	img++;
 // }
 
-static int	get_wall_color(t_data *data)
+static char	*which_texture(t_data *data)
 {
 	if (data->raycast.side == 0)
 	{
 		if (data->raycast.step_x > 0)
-			return (0x00FF0000); 
-		else
-			return (0x0000FF00);
+			return (data->textures.ea_addr);
+		else 
+			return (data->textures.we_addr);
 	}
 	else
 	{
 		if (data->raycast.step_y > 0)
-			return (0x00808080);
+			return (data->textures.so_addr);
 		else
-			return (0x000000FF); 
+			return (data->textures.no_addr); 
 	}
 }
+
+static int	get_current_ll(t_data *data)
+{
+	if (data->raycast.side == 0)
+	{
+		if (data->raycast.step_x > 0)
+			return (data->textures.ea_size_line);
+		else 
+			return (data->textures.we_size_line);
+	}
+	else
+	{
+		if (data->raycast.step_y > 0)
+			return (data->textures.so_size_line);
+		else
+			return (data->textures.no_size_line);
+	}
+}
+
+static void draw_vertical_line(t_data *data, int x, int y_start, int y_end, int color)
+{
+	int	y;
+	double	wall_x;
+	int		tex_y;
+	int		tex_x;
+	int		d;
+
+	y = 0;
+	data->which_tex = which_texture(data);
+	data->current_bpp = get_current_bpp(data);
+	data->current_line_length = get_current_ll(data);
+    if (y_start < 0)
+		y_start = 0;
+    if (y_end >= SCREEN_HEIGHT)
+		y_end = SCREEN_HEIGHT - 1;
+    y = y_start;
+	if (data->raycast.side == 0)
+    	wall_x = data->raycast.pos_y + data->raycast.perpwalldist * data->raycast.raydir_y;
+	else
+    	wall_x = data->raycast.pos_x + data->raycast.perpwalldist * data->raycast.raydir_x;
+	wall_x -= floor(wall_x);
+	tex_x = (int)(wall_x * (double)64);
+	if ((data->raycast.side == 0 && data->raycast.raydir_x > 0) ||
+    	(data->raycast.side == 1 && data->raycast.raydir_y < 0))
+    	tex_x = 64 - tex_x - 1;
+    while (y <= y_end)
+    {
+		d = y * 256 - SCREEN_HEIGHT * 128 + data->raycast.lineheight * 128;
+		tex_y = ((d * 64) / data->raycast.lineheight) / 256;
+		
+		color = *(int *)(data->which_tex + (tex_y * data->current_line_length + tex_x * (data->current_bpp / 8)));
+		*(int *)(data->scene.addr + (y * data->scene.size_line + x * (data->scene.bpp / 8))) = color;
+		y++;
+    }
+}
+
 static void	process_raycast_column(t_data *data, int x)
 {
-	int color;
+	int	color;
 
+	color = 0;
 	init_ray_params(data, x);
 	find_delta_dist(data);
 	find_step_and_sidedist(data);
@@ -170,7 +228,6 @@ static void	process_raycast_column(t_data *data, int x)
 	find_wall_dist(data);
 	find_draw_coords(data);
 	draw_ceiling_and_floor_column(data, x, data->raycast.drawstart, data->raycast.drawend);
-	color = get_wall_color(data);
 	draw_vertical_line(data, x, data->raycast.drawstart, data->raycast.drawend, color);
 }
 

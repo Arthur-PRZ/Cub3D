@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3D.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 10:03:46 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/13 15:47:05 by artperez         ###   ########.fr       */
+/*   Updated: 2025/06/23 10:51:23 by ctravers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,10 +116,18 @@ typedef struct s_textures
 	void	*no_text;
 	void	*we_text;
 	void	*ea_text;
-	int		*so_data;
-	int		*no_data;
-	int		*we_data;
-	int		*ea_data;
+	char	*so_addr;
+	char	*no_addr;
+	char	*ea_addr;
+	char	*we_addr;
+	int		so_bpp;
+	int		no_bpp;
+	int		we_bpp;
+	int		ea_bpp;
+	int		so_size_line;
+	int		no_size_line;
+	int		we_size_line;
+	int		ea_size_line;
 	int		width;
 	int		height;
 }	t_textures;
@@ -129,6 +137,9 @@ typedef struct s_data
 {
 	void	*mlx;
 	void	*win;
+	char	*which_tex;
+	int		current_bpp;
+	int		current_line_length;
 	int		offset;
 	double	move_speed;
 	double	rot_speed;

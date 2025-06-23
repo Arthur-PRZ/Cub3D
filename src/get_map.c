@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_map.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 11:11:32 by ctravers          #+#    #+#             */
-/*   Updated: 2025/06/13 14:56:26 by artperez         ###   ########.fr       */
+/*   Updated: 2025/06/23 10:45:07 by ctravers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -418,13 +418,6 @@ void	init_map_data(char *map_name, t_data *data)
 	if (fd < 0)
 		exit_error("Error: Can't open fd\n");
 	get_map_data(data, fd);
-	// ft_printf("North:%s South:%s West:%s East:%s\nRgb ceiling:%i Rgb floor:%i\n", map_data->no_text, map_data->so_text, map_data->we_text, map_data->ea_text, map_data->floor, map_data->ceiling);
 	check_map(data, fd);
 	close(fd);
-	// while (i < map_data->map.y)
-	// {
-	// 	ft_printf("%s\n", map_data->map.grid[i]);
-	// 	i++;
-	// }
-	// exit_and_free(NULL, "", map_data, fd);
 }

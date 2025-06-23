@@ -6,7 +6,7 @@
 /*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 10:03:46 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/23 10:51:23 by ctravers         ###   ########.fr       */
+/*   Updated: 2025/06/23 13:40:04 by ctravers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@
 #include "../minilibx-linux/mlx.h"
 #include <stdio.h>
 
-# define SCREEN_HEIGHT 1080
-# define SCREEN_WIDTH 1920
+# define SCREEN_HEIGHT 2160
+# define SCREEN_WIDTH 3840
 # define PLANE 0.66
 
 typedef struct	s_map

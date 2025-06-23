@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   movements.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 09:31:00 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/13 15:14:15 by artperez         ###   ########.fr       */
+/*   Updated: 2025/06/23 11:35:17 by ctravers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,31 +47,73 @@ static int    handle_keyrelease(int keysym, t_data *data)
         data->keys.right_pressed = false;
     return (0);
 }
+static int is_valid_position(t_data *data, double x, double y)
+{
+    int map_x = (int)x;
+    int map_y = (int)y;
+	
+    if (data->map_data.map.grid[map_y][map_x] == '1')
+        return (0);
+    return (1);
+}
+
+static int check_collision(t_data *data, double new_x, double new_y)
+{
+    double margin = 0.1; // Marge de sécurité autour du joueur
+    
+    if (!is_valid_position(data, new_x - margin, new_y - margin) ||
+        !is_valid_position(data, new_x + margin, new_y - margin) ||
+        !is_valid_position(data, new_x - margin, new_y + margin) ||
+        !is_valid_position(data, new_x + margin, new_y + margin))
+        return (1); // Collision détectée
+    
+    return (0); // Pas de collision
+}
 
 void handle_movement(t_data *data)
 {
-    double	old_dir_x;
-	double	old_plane_x;
+    double old_dir_x;
+    double old_plane_x;
+    double new_x, new_y;
     
     if (data->keys.d_pressed)
     {
-        data->raycast.pos_x += data->raycast.dir_y * data->move_speed;
-        data->raycast.pos_y -= data->raycast.dir_x * data->move_speed;
+        new_x = data->raycast.pos_x + data->raycast.dir_y * data->move_speed;
+        new_y = data->raycast.pos_y - data->raycast.dir_x * data->move_speed;
+        if (!check_collision(data, new_x, data->raycast.pos_y))
+            data->raycast.pos_x = new_x;
+        if (!check_collision(data, data->raycast.pos_x, new_y))
+            data->raycast.pos_y = new_y;
     }
     if (data->keys.a_pressed)
     {
-        data->raycast.pos_x -= data->raycast.dir_y * data->move_speed;
-        data->raycast.pos_y += data->raycast.dir_x * data->move_speed;
+        new_x = data->raycast.pos_x - data->raycast.dir_y * data->move_speed;
+        new_y = data->raycast.pos_y + data->raycast.dir_x * data->move_speed;
+        
+        if (!check_collision(data, new_x, data->raycast.pos_y))
+            data->raycast.pos_x = new_x;
+        if (!check_collision(data, data->raycast.pos_x, new_y))
+            data->raycast.pos_y = new_y;
     }
     if (data->keys.s_pressed)
     {
-        data->raycast.pos_x -= data->raycast.dir_x * data->move_speed;
-        data->raycast.pos_y -= data->raycast.dir_y * data->move_speed;
+        new_x = data->raycast.pos_x - data->raycast.dir_x * data->move_speed;
+        new_y = data->raycast.pos_y - data->raycast.dir_y * data->move_speed;
+        
+        if (!check_collision(data, new_x, data->raycast.pos_y))
+            data->raycast.pos_x = new_x;
+        if (!check_collision(data, data->raycast.pos_x, new_y))
+            data->raycast.pos_y = new_y;
     }
     if (data->keys.w_pressed)
     {
-        data->raycast.pos_x += data->raycast.dir_x * data->move_speed;
-        data->raycast.pos_y += data->raycast.dir_y * data->move_speed;
+        new_x = data->raycast.pos_x + data->raycast.dir_x * data->move_speed;
+        new_y = data->raycast.pos_y + data->raycast.dir_y * data->move_speed;
+        
+        if (!check_collision(data, new_x, data->raycast.pos_y))
+            data->raycast.pos_x = new_x;
+        if (!check_collision(data, data->raycast.pos_x, new_y))
+            data->raycast.pos_y = new_y;
     }
     if (data->keys.right_pressed)
     {

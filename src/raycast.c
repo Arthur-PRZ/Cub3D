@@ -6,7 +6,7 @@
 /*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 13:55:08 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/23 10:52:36 by ctravers         ###   ########.fr       */
+/*   Updated: 2025/06/23 13:39:15 by ctravers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,17 +33,19 @@ static int	get_current_bpp(t_data *data)
 static void draw_ceiling_and_floor_column(t_data *data, int x, int wall_start, int wall_end)
 {
     int y;
-    
+    int bpp_x_calc;
+	
     y = 0;
+	bpp_x_calc = x * (data->scene.bpp / 8);
     while (y < wall_start)
     {
-        *(int *)(data->scene.addr + (y * data->scene.size_line + x * (data->scene.bpp / 8))) = data->map_data.ceiling;
+        *(int *)(data->scene.addr + (y * data->scene.size_line + bpp_x_calc)) = data->map_data.ceiling;
         y++;
     }
     y = wall_end + 1;
     while (y < SCREEN_HEIGHT)
     {
-        *(int *)(data->scene.addr + (y * data->scene.size_line + x * (data->scene.bpp / 8))) = data->map_data.floor;
+        *(int *)(data->scene.addr + (y * data->scene.size_line + bpp_x_calc)) = data->map_data.floor;
         y++;
     }
 }
@@ -186,8 +188,10 @@ static void draw_vertical_line(t_data *data, int x, int y_start, int y_end, int 
 	int		tex_y;
 	int		tex_x;
 	int		d;
+    int bpp_x_calc;
 
 	y = 0;
+	bpp_x_calc = x * (data->scene.bpp / 8);
 	data->which_tex = which_texture(data);
 	data->current_bpp = get_current_bpp(data);
 	data->current_line_length = get_current_ll(data);
@@ -209,9 +213,8 @@ static void draw_vertical_line(t_data *data, int x, int y_start, int y_end, int 
     {
 		d = y * 256 - SCREEN_HEIGHT * 128 + data->raycast.lineheight * 128;
 		tex_y = ((d * 64) / data->raycast.lineheight) / 256;
-		
 		color = *(int *)(data->which_tex + (tex_y * data->current_line_length + tex_x * (data->current_bpp / 8)));
-		*(int *)(data->scene.addr + (y * data->scene.size_line + x * (data->scene.bpp / 8))) = color;
+		*(int *)(data->scene.addr + (y * data->scene.size_line + bpp_x_calc)) = color;
 		y++;
     }
 }
@@ -231,24 +234,38 @@ static void	process_raycast_column(t_data *data, int x)
 	draw_vertical_line(data, x, data->raycast.drawstart, data->raycast.drawend, color);
 }
 
-static void	init_scene_img(t_data *data)
+static void	memcpy_column(t_data *data, int dst_x, int src_x)
 {
-	data->scene.img = mlx_new_image(data->mlx, SCREEN_WIDTH, SCREEN_HEIGHT);
-	data->scene.addr = mlx_get_data_addr(data->scene.img, &data->scene.bpp, &data->scene.size_line, &data->scene.endian);
+	int	y;
+	char	*dst;
+	char	*src;
+	
+	y = 0;
+	while(y < SCREEN_HEIGHT)
+	{
+		src = data->scene.addr + (y * data->scene.size_line + src_x * (data->scene.bpp / 8));
+		dst = data->scene.addr + (y * data->scene.size_line + dst_x * (data->scene.bpp / 8));
+		*(int *)dst = *(int *)src;
+		y++;
+	}
+	
 }
+
 void    raycast(t_data *data)
 {
 	int	x;
+	int color;
+	int	step;
 
+	step = 2;
+	color = 0;
 	x = 0;
-
-    if (data->scene.img)
-        mlx_destroy_image(data->mlx, data->scene.img);
-    init_scene_img(data);
 	while (x < SCREEN_WIDTH)
 	{
 		process_raycast_column(data, x);
-		x++;
+		if (x + 1 < SCREEN_WIDTH)
+			memcpy_column(data, x + 1, x);
+		x += step;
 	}
 	mlx_put_image_to_window(data->mlx, data->win, data->scene.img, 0, 0);
 }

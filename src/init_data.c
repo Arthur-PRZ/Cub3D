@@ -6,7 +6,7 @@
 /*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 11:46:28 by ctravers          #+#    #+#             */
-/*   Updated: 2025/06/23 10:52:48 by ctravers         ###   ########.fr       */
+/*   Updated: 2025/06/23 13:13:39 by ctravers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,13 @@ void	init_data(t_data *data)
 {
 	data->mlx = mlx_init();
 	data->old_time = 0;
-	data->scene.img = NULL;
 	if (!data->mlx)
 		exit_and_free(NULL, "Error: Failed to init MLX", data, -1);
 	data->win = mlx_new_window(data->mlx, SCREEN_WIDTH, SCREEN_HEIGHT, "cub3D");
 	if (!data->win)
 		exit_and_free(NULL, "Error: Failed to init MLX", data, -1);
+	data->scene.img = mlx_new_image(data->mlx, SCREEN_WIDTH, SCREEN_HEIGHT);
+	data->scene.addr = mlx_get_data_addr(data->scene.img, &data->scene.bpp, &data->scene.size_line, &data->scene.endian);
 	init_texture(data);
     raycast(data);
 }

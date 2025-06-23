@@ -6,7 +6,7 @@
 /*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 09:58:02 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/23 11:16:41 by ctravers         ###   ########.fr       */
+/*   Updated: 2025/06/23 11:19:48 by ctravers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ int	game_loop(t_data *data)
         return (0);
     }
 	frame_time = current_time - data->old_time;
+	printf("%f\n", (1 / frame_time));
 	data->old_time = current_time;
 	data->move_speed = frame_time * 2.0;
     data->rot_speed = frame_time * 2.5;

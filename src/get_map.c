@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_map.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
+/*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 11:11:32 by ctravers          #+#    #+#             */
-/*   Updated: 2025/06/23 10:45:07 by ctravers         ###   ########.fr       */
+/*   Updated: 2025/06/24 09:57:41 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,7 +166,6 @@ int	get_rgb(char *line, t_data *data, int fd)
 		close(fd);
 		exit_and_free(line, "Error: Rgb, invalid format", data, fd);
 	}
-	ft_printf("Red: %i, Green: %i, Blue: %i\n", red, green, blue);
 	rgb = (red << 16) + (green << 8) + blue;
 	return (rgb);
 }
@@ -206,7 +205,6 @@ static void	check_line(char *line, t_data *data, int fd)
 		temp = get_path(line);
 		free(line);
 		data->map_data.floor = get_rgb(temp, data, fd);
-		ft_printf("%i\n", data->map_data.floor);
 		free(temp);
 		return ;
 	}	
@@ -294,6 +292,8 @@ static int	count_map_height(char *map_name, t_data *data)
 		}
 		free(line);
 	}
+	if (height == 0)
+		exit_and_free(NULL, "Error: Missing data", data, fd);
 	check_eof(fd, data);
 	close(fd);
 	return (height);
@@ -402,6 +402,7 @@ void	init_map_data(char *map_name, t_data *data)
 	data->map_data.ceiling = -1;
 	data->map_data.floor = -1;
 	data->map_data.map.y = 0;
+	data->scene.img = NULL;
 	data->map_data.path_no_text = NULL;
 	data->map_data.path_so_text = NULL;
 	data->map_data.path_we_text = NULL;

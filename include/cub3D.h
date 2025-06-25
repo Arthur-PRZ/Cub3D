@@ -6,7 +6,7 @@
 /*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 10:03:46 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/25 14:42:53 by ctravers         ###   ########.fr       */
+/*   Updated: 2025/06/25 15:02:37 by ctravers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,6 +182,6 @@ void	find_wall_dist(t_data *data);
 void	find_step_and_sidedist(t_data *data);
 void	find_delta_dist(t_data *data);
 int		exit_cross(t_data *data);
-int	check_collision(t_data *data, double new_x, double new_y);
+int		check_collision(t_data *data, double new_x, double new_y);
 
 #endif

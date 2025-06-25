@@ -6,7 +6,7 @@
 /*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 11:24:25 by ctravers          #+#    #+#             */
-/*   Updated: 2025/06/25 11:53:54 by artperez         ###   ########.fr       */
+/*   Updated: 2025/06/25 13:11:17 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 
 void	exit_error(char *msg)
 {
-    ft_putstr_fd(msg, 2);
-    exit(1);
+	ft_putstr_fd(msg, 2);
+	exit (1);
 }
 
-double	get_time()
+double	get_time(void)
 {
-	struct timeval t;
+	struct timeval	t;
 
 	gettimeofday(&t, NULL);
 	return (t.tv_sec + t.tv_usec / 1000000.0);

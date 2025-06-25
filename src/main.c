@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
+/*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 09:58:02 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/23 11:19:48 by ctravers         ###   ########.fr       */
+/*   Updated: 2025/06/25 13:13:24 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,28 +16,28 @@ int	game_loop(t_data *data)
 {
 	double	current_time;
 	double	frame_time;
-	
+
 	current_time = get_time();
 	if (data->old_time == 0)
-    {
-        data->old_time = current_time;
-        return (0);
-    }
+	{
+		data->old_time = current_time;
+		return (0);
+	}
 	frame_time = current_time - data->old_time;
 	printf("%f\n", (1 / frame_time));
 	data->old_time = current_time;
 	data->move_speed = frame_time * 2.0;
-    data->rot_speed = frame_time * 2.5;
+	data->rot_speed = frame_time * 2.5;
 	handle_movement(data);
-    raycast(data);
+	raycast(data);
 	return (0);
 }
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
 	t_data	data;
 
-    check_input(argc, argv[1]);
+	check_input(argc, argv[1]);
 	init_map_data(argv[1], &data);
 	init_data(&data);
 	movements(&data);

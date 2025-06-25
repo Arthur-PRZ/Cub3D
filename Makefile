@@ -6,7 +6,7 @@ OBJDIR = obj/
 LIBFTDIR = libft
 MLXDIR = minilibx-linux
 
-SRC_FILES = main input_management utils get_map init_data raycast movements
+SRC_FILES = main input_management utils get_map init_data raycast movements free count_grid get_map_text_and_rgb check_map_errors utils2
 SRC = $(addprefix $(SRCDIR), $(addsuffix .c, $(SRC_FILES)))
 OBJ = $(addprefix $(OBJDIR), $(addsuffix .o, $(SRC_FILES)))
 NAME = cub3D

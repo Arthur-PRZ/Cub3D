@@ -6,7 +6,7 @@
 /*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 10:03:46 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/24 09:07:17 by artperez         ###   ########.fr       */
+/*   Updated: 2025/06/25 13:02:36 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,5 +163,16 @@ void	movements(t_data *data);
 double	get_time();
 int		game_loop(t_data *data);
 void	handle_movement(t_data *data);
+char	*skip_figure_and_comma(char	*tmp, char *line, t_data *data, int fd);
+bool	is_alpha(char *line);
+void	check_eof(int fd, t_data *data);
+bool	is_data_init(t_map_data *map_data);
+int		count_line_height(char *line, int height, bool *map_line);
+int		count_map_height(char *map_name, t_data *data);
+void	check_line(char *line, t_data *data, int fd);
+void	check_map(t_data *data, int fd);
+void	get_map(char *line, t_map_data *map_data);
+char	*get_path(char *line);
+
 
 #endif

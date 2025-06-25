@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils2.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 12:04:13 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/25 12:04:51 by artperez         ###   ########.fr       */
+/*   Updated: 2025/06/25 14:30:16 by ctravers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,4 +34,10 @@ bool	is_data_init(t_map_data *map_data)
 		&& map_data->path_we_text && map_data->floor >= 0)
 		return (true);
 	return (false);
+}
+
+int	exit_cross(t_data *data)
+{
+	exit_and_free(NULL, "", data, -1);
+	return (0);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3D.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 10:03:46 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/25 14:19:30 by artperez         ###   ########.fr       */
+/*   Updated: 2025/06/25 14:35:14 by ctravers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,5 +182,6 @@ void	memcpy_column(t_data *data, int dst_x, int src_x);
 void	find_wall_dist(t_data *data);
 void	find_step_and_sidedist(t_data *data);
 void	find_delta_dist(t_data *data);
+int		exit_cross(t_data *data)
 
 #endif

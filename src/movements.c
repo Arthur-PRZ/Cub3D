@@ -6,150 +6,82 @@
 /*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 09:31:00 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/23 11:35:17 by ctravers         ###   ########.fr       */
+/*   Updated: 2025/06/25 14:32:25 by ctravers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/cub3D.h"
 
-static int    handle_keypress(int keysym, t_data *data)
+static int	handle_keypress(int keysym, t_data *data)
 {
-    if (keysym == XK_Escape)
-        exit_and_free(NULL, "", data, -1);
-    if (keysym == 100) // D
-        data->keys.d_pressed = true;
-    if (keysym == 97)  // A
-        data->keys.a_pressed = true;
-    if (keysym == 115) // S
-        data->keys.s_pressed = true;
-    if (keysym == 119) // W
-        data->keys.w_pressed = true;
-    if (keysym == XK_Left)
-        data->keys.left_pressed = true;
-    if (keysym == XK_Right)
-        data->keys.right_pressed = true;
-    return (0);
-}
-
-static int    handle_keyrelease(int keysym, t_data *data)
-{
-    if (keysym == 100)
-        data->keys.d_pressed = false;
-    if (keysym == 97)
-        data->keys.a_pressed = false;
-    if (keysym == 115)
-        data->keys.s_pressed = false;
-    if (keysym == 119)
-        data->keys.w_pressed = false;
-    if (keysym == XK_Left)
-        data->keys.left_pressed = false;
-    if (keysym == XK_Right)
-        data->keys.right_pressed = false;
-    return (0);
-}
-static int is_valid_position(t_data *data, double x, double y)
-{
-    int map_x = (int)x;
-    int map_y = (int)y;
-	
-    if (data->map_data.map.grid[map_y][map_x] == '1')
-        return (0);
-    return (1);
-}
-
-static int check_collision(t_data *data, double new_x, double new_y)
-{
-    double margin = 0.1; // Marge de sécurité autour du joueur
-    
-    if (!is_valid_position(data, new_x - margin, new_y - margin) ||
-        !is_valid_position(data, new_x + margin, new_y - margin) ||
-        !is_valid_position(data, new_x - margin, new_y + margin) ||
-        !is_valid_position(data, new_x + margin, new_y + margin))
-        return (1); // Collision détectée
-    
-    return (0); // Pas de collision
-}
-
-void handle_movement(t_data *data)
-{
-    double old_dir_x;
-    double old_plane_x;
-    double new_x, new_y;
-    
-    if (data->keys.d_pressed)
-    {
-        new_x = data->raycast.pos_x + data->raycast.dir_y * data->move_speed;
-        new_y = data->raycast.pos_y - data->raycast.dir_x * data->move_speed;
-        if (!check_collision(data, new_x, data->raycast.pos_y))
-            data->raycast.pos_x = new_x;
-        if (!check_collision(data, data->raycast.pos_x, new_y))
-            data->raycast.pos_y = new_y;
-    }
-    if (data->keys.a_pressed)
-    {
-        new_x = data->raycast.pos_x - data->raycast.dir_y * data->move_speed;
-        new_y = data->raycast.pos_y + data->raycast.dir_x * data->move_speed;
-        
-        if (!check_collision(data, new_x, data->raycast.pos_y))
-            data->raycast.pos_x = new_x;
-        if (!check_collision(data, data->raycast.pos_x, new_y))
-            data->raycast.pos_y = new_y;
-    }
-    if (data->keys.s_pressed)
-    {
-        new_x = data->raycast.pos_x - data->raycast.dir_x * data->move_speed;
-        new_y = data->raycast.pos_y - data->raycast.dir_y * data->move_speed;
-        
-        if (!check_collision(data, new_x, data->raycast.pos_y))
-            data->raycast.pos_x = new_x;
-        if (!check_collision(data, data->raycast.pos_x, new_y))
-            data->raycast.pos_y = new_y;
-    }
-    if (data->keys.w_pressed)
-    {
-        new_x = data->raycast.pos_x + data->raycast.dir_x * data->move_speed;
-        new_y = data->raycast.pos_y + data->raycast.dir_y * data->move_speed;
-        
-        if (!check_collision(data, new_x, data->raycast.pos_y))
-            data->raycast.pos_x = new_x;
-        if (!check_collision(data, data->raycast.pos_x, new_y))
-            data->raycast.pos_y = new_y;
-    }
-    if (data->keys.right_pressed)
-    {
-        old_dir_x = data->raycast.dir_x;
-        old_plane_x = data->raycast.plane_x;
-        data->raycast.dir_x = old_dir_x * cos(-data->rot_speed) - data->raycast.dir_y * sin(-data->rot_speed);
-        data->raycast.dir_y = old_dir_x * sin(-data->rot_speed) + data->raycast.dir_y * cos(-data->rot_speed);
-        data->raycast.plane_x = old_plane_x * cos(-data->rot_speed) - data->raycast.plane_y * sin(-data->rot_speed);
-        data->raycast.plane_y = old_plane_x * sin(-data->rot_speed) + data->raycast.plane_y * cos(-data->rot_speed);
-    }
-    if (data->keys.left_pressed)
-    {
-        old_dir_x = data->raycast.dir_x;
-        old_plane_x = data->raycast.plane_x;
-        data->raycast.dir_x = old_dir_x * cos(data->rot_speed) - data->raycast.dir_y * sin(data->rot_speed);
-        data->raycast.dir_y = old_dir_x * sin(data->rot_speed) + data->raycast.dir_y * cos(data->rot_speed);
-        data->raycast.plane_x = old_plane_x * cos(data->rot_speed) - data->raycast.plane_y * sin(data->rot_speed);
-        data->raycast.plane_y = old_plane_x * sin(data->rot_speed) + data->raycast.plane_y * cos(data->rot_speed);
-    }
-}
-
-static int	exit_cross(t_data *data)
-{
-	exit_and_free(NULL, "", data, -1);
+	if (keysym == XK_Escape)
+		exit_and_free(NULL, "", data, -1);
+	if (keysym == 100)
+		data->keys.d_pressed = true;
+	if (keysym == 97)
+		data->keys.a_pressed = true;
+	if (keysym == 115)
+		data->keys.s_pressed = true;
+	if (keysym == 119)
+		data->keys.w_pressed = true;
+	if (keysym == XK_Left)
+		data->keys.left_pressed = true;
+	if (keysym == XK_Right)
+		data->keys.right_pressed = true;
 	return (0);
 }
 
-void movements(t_data *data)
+static int	handle_keyrelease(int keysym, t_data *data)
 {
-    data->keys.w_pressed = false;
-    data->keys.a_pressed = false;
-    data->keys.s_pressed = false;
-    data->keys.d_pressed = false;
-    data->keys.left_pressed = false;
-    data->keys.right_pressed = false;
-	mlx_hook(data->win, 2, 1L<<0, handle_keypress, data);
-	mlx_hook(data->win, 3, 1L<<1, handle_keyrelease, data);
-    mlx_hook(data->win, 17, 0, exit_cross, data);
+	if (keysym == 100)
+		data->keys.d_pressed = false;
+	if (keysym == 97)
+		data->keys.a_pressed = false;
+	if (keysym == 115)
+		data->keys.s_pressed = false;
+	if (keysym == 119)
+		data->keys.w_pressed = false;
+	if (keysym == XK_Left)
+		data->keys.left_pressed = false;
+	if (keysym == XK_Right)
+		data->keys.right_pressed = false;
+	return (0);
+}
+
+static int	is_valid_position(t_data *data, double x, double y)
+{
+	int	map_x;
+	int	map_y;
+
+	map_x = (int)x;
+	map_y = (int)y;
+	if (data->map_data.map.grid[map_y][map_x] == '1')
+		return (0);
+	return (1);
+}
+
+static int	check_collision(t_data *data, double new_x, double new_y)
+{
+	double	margin;
+
+	margin = 0.1;
+	if (!is_valid_position(data, new_x - margin, new_y - margin)
+		|| !is_valid_position(data, new_x + margin, new_y - margin)
+		|| !is_valid_position(data, new_x - margin, new_y + margin)
+		|| !is_valid_position(data, new_x + margin, new_y + margin))
+		return (1);
+	return (0);
+}
+
+void	movements(t_data *data)
+{
+	data->keys.w_pressed = false;
+	data->keys.a_pressed = false;
+	data->keys.s_pressed = false;
+	data->keys.d_pressed = false;
+	data->keys.left_pressed = false;
+	data->keys.right_pressed = false;
+	mlx_hook(data->win, 2, 1L << 0, handle_keypress, data);
+	mlx_hook(data->win, 3, 1L << 1, handle_keyrelease, data);
+	mlx_hook(data->win, 17, 0, exit_cross, data);
 }

@@ -6,7 +6,7 @@
 /*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 10:03:46 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/25 13:02:36 by artperez         ###   ########.fr       */
+/*   Updated: 2025/06/25 14:19:30 by artperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,6 +173,14 @@ void	check_line(char *line, t_data *data, int fd);
 void	check_map(t_data *data, int fd);
 void	get_map(char *line, t_map_data *map_data);
 char	*get_path(char *line);
-
+void	draw_vertical_line(t_data *data, int x, int color);
+int		get_current_bpp(t_data *data);
+char	*which_texture(t_data *data);
+int	get_current_ll(t_data *data);
+void	find_draw_coords(t_data *data);
+void	memcpy_column(t_data *data, int dst_x, int src_x);
+void	find_wall_dist(t_data *data);
+void	find_step_and_sidedist(t_data *data);
+void	find_delta_dist(t_data *data);
 
 #endif

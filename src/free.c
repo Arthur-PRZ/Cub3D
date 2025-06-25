@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: artperez <artperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 11:51:59 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/25 13:07:25 by artperez         ###   ########.fr       */
+/*   Updated: 2025/06/25 14:47:53 by ctravers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ void	exit_and_free(char *line, char *msg, t_data *data, int fd)
 		free(data->map_data.map.grid);
 	}
 	free_data(data);
-	ft_printf("%s\n", msg);
+	if (msg && msg[0] != '\0')
+		ft_printf("%s\n", msg);
 	exit(1);
 }

@@ -6,7 +6,7 @@
 /*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 09:31:00 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/25 14:32:25 by ctravers         ###   ########.fr       */
+/*   Updated: 2025/06/25 14:42:44 by ctravers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ static int	is_valid_position(t_data *data, double x, double y)
 	return (1);
 }
 
-static int	check_collision(t_data *data, double new_x, double new_y)
+int	check_collision(t_data *data, double new_x, double new_y)
 {
 	double	margin;
 

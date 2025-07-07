@@ -6,7 +6,7 @@
 /*   By: ctravers <ctravers@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 11:51:59 by artperez          #+#    #+#             */
-/*   Updated: 2025/06/25 14:47:53 by ctravers         ###   ########.fr       */
+/*   Updated: 2025/07/07 09:45:44 by ctravers         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ static void	free_gnl_and_fd(int fd)
 {
 	char	*cleanup_line;
 
-	cleanup_line = get_next_line(fd);
 	while (1)
 	{
 		cleanup_line = get_next_line(fd);

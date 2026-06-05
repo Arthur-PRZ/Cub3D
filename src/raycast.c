@@ -90,11 +90,9 @@ static void	process_raycast_column(t_data *data, int x)
 void	raycast(t_data *data)
 {
 	int	x;
-	int	color;
 	int	step;
 
 	step = 2;
-	color = 0;
 	x = 0;
 	while (x < SCREEN_WIDTH)
 	{
